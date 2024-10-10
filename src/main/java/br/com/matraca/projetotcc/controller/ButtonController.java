@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.matraca.projetotcc.model.button.Button;
-import br.com.matraca.projetotcc.model.button.ButtonRepository;
-import br.com.matraca.projetotcc.model.button.ButtonRequestDTO;
-import br.com.matraca.projetotcc.model.button.ButtonResponseDTO;
+import br.com.matraca.projetotcc.model.dto.ButtonRequestDTO;
+import br.com.matraca.projetotcc.model.dto.ButtonResponseDTO;
+import br.com.matraca.projetotcc.model.entity.Button;
+import br.com.matraca.projetotcc.repository.ButtonRepository;
 
 @RestController
 @RequestMapping("button")
