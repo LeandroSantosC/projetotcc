@@ -1,0 +1,116 @@
+*{
+    font-size: small;
+    box-sizing: border-box
+}
+
+body{
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+#menu-button{
+    height: 50px;
+    width: 50px;
+    border-radius: 20%;
+}
+
+.top-bar{
+    height: 56px;
+    padding: 0 16px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    background-color: aqua;
+}
+
+#board{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    position: stick;
+    gap: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    height: 150px;
+    width: 100%;
+    background-color: cornflowerblue;
+}
+
+.board-cards{
+    display: flex;
+    justify-content: flex-start;
+    overflow: auto;
+    height: 100%;
+    padding: 3px;
+    gap: 3px;
+}
+
+.left-button{
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    gap: 50px;
+    left: 0;
+}
+
+.right-button{
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    right: 0;
+    gap: 50px;
+}
+
+.board-button{
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+}
+
+.card-button{
+    height: 100%;
+    min-width: 120px;
+}
+
+.buttons{
+    flex: 0 1 calc(33.33% - 6px); /* 3 itens por linha */
+    margin: 3px;
+    padding: 5px;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.buttons .content {
+    position: absolute; /* Mantém o conteúdo dentro do quadrado */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.buttons::before {
+    content: "";
+    display: block;
+    padding-top: 100%; /* Faz a altura ser 100% da largura */
+}
+
+#button-container{
+    position: relative;
+    display: flex;
+    justify-content: flex-start; /* Itens alinhados à esquerda */
+    flex-wrap: wrap; /* Permite que os itens quebrem para a próxima linha */
+}
+
+header{
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: 100%;
+}
