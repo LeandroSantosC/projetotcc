@@ -1,0 +1,5 @@
+const menu_button = getElementById("menu-button")
+const backspace_button = getElementById("backspace-button")
+const delete_button = getElementById("delete-button")
+const play_button = getElementById("play-button")
+const board_access = getElementById("board-access-button")

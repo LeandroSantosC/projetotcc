@@ -1,5 +1,7 @@
 *{
     font-size: small;
+    padding: 0;
+    margin: 0;
     box-sizing: border-box
 }
 
@@ -7,24 +9,64 @@ body{
     display: flex;
     flex-direction: column;
     position: relative;
+    overflow: hidden;
+    height: 100vh;
+    /* Fire Fox */
+    scrollbar-width: thin; /* Barra de rolagem fina */
+    scrollbar-color: #888 #f1f1f1; /* Cor do botão e da pista */
+}
+
+/* WebKit (Chrome, Safari, Edge) */
+body::-webkit-scrollbar {
+    width: 8px;  /* Barra de rolagem fina */
+    height: 8px; /* Barra de rolagem horizontal fina */
+}
+  
+body::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Cor da pista */
+}
+  
+body::-webkit-scrollbar-thumb {
+    background: #888; /* Cor do botão de rolagem */
+    border-radius: 10px; /* Cantos arredondados */
+  }
+  
+  body::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Cor do botão ao passar o mouse */
+}
+
+header{
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top:0;
+    height: 200px;
+    width: 100%;
+    z-index: 100;
 }
 
 #menu-button{
-    height: 50px;
-    width: 50px;
+    margin: 5px;
+    height: 90%;
+    width: 40px;
     border-radius: 20%;
+    position: absolute;
+    left: 0;
 }
 
 .top-bar{
-    height: 56px;
+    height: 50px;
     padding: 0 16px;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
     background-color: aqua;
+    position: relative;
 }
 
+
+/* BOARD */
 #board{
     display: flex;
     align-items: center;
@@ -34,7 +76,7 @@ body{
     gap: 5px;
     padding-left: 5px;
     padding-right: 5px;
-    height: 150px;
+    flex: 1;
     width: 100%;
     background-color: cornflowerblue;
 }
@@ -42,38 +84,32 @@ body{
 .board-cards{
     display: flex;
     justify-content: flex-start;
-    overflow: auto;
+    overflow-x: auto;
     height: 100%;
     padding: 3px;
     gap: 3px;
 }
 
-.left-button{
+.board-cards button{
+    flex-shrink: 0;
+    height: 100%;
+    aspect-ratio: 1 / 1;
+}
+
+.board-buttons{
     display: flex;
     flex-direction: column;
     position: relative;
     gap: 50px;
-    left: 0;
 }
 
-.right-button{
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    right: 0;
-    gap: 50px;
-}
-
-.board-button{
+.board-buttons button{
     border-radius: 50%;
     width: 40px;
     height: 40px;
 }
 
-.card-button{
-    height: 100%;
-    min-width: 120px;
-}
+/* FIM BOARD */
 
 .buttons{
     flex: 0 1 calc(33.33% - 6px); /* 3 itens por linha */
@@ -101,16 +137,11 @@ body{
     padding-top: 100%; /* Faz a altura ser 100% da largura */
 }
 
-#button-container{
+.button-container{
     position: relative;
     display: flex;
     justify-content: flex-start; /* Itens alinhados à esquerda */
     flex-wrap: wrap; /* Permite que os itens quebrem para a próxima linha */
-}
-
-header{
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    width: 100%;
+    overflow-y: auto;
+    flex: 1;
 }
