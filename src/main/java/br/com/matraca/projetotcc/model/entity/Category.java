@@ -30,7 +30,7 @@ public class Category {
     private String name;
 
     @OneToMany
-    private List<Button> buttons;
+    private List<Button> button;
     
     // public Category(ButtonRequestDTO data){ //construtor para inicializar um objeto pelo Request, possibilitando a conversão
     //     this.name = data.name();

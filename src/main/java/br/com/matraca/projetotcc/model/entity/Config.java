@@ -31,7 +31,7 @@ public class Config {
     private String name;
 
     @OneToMany
-    private List<User> users;
+    private List<User> user;
 
     @ManyToOne
     private Voice voice;

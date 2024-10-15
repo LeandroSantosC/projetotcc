@@ -1,8 +1,11 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" 
+xmlns:th="http://thymeleaf.org"
+xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles/style.css" th:ref="@{/styles/style.css}">
     <link rel="stylesheet" href="../static/styles/style.css">
     <script src="https://kit.fontawesome.com/3c130d0950.js" crossorigin="anonymous"></script>
     <title>Matraka</title>
@@ -30,21 +33,10 @@
     </header>
 
     <h3 style="text-align: center; font-size: 30px;">Botões</h3>
-    <main class="button-container">
-        <button class="buttons">Comer</button>
-        <button class="buttons">Comer</button>
-        <button class="buttons">Comer</button>
-        <button class="buttons">Comer</button>
-        <button class="buttons">Comer</button>
-        <button class="buttons">Comer</button>
-        <button class="buttons">Comer</button>
-        <button class="buttons">Comer</button>
-        <button class="buttons">Comer</button>
-        <button class="buttons">Comer</button>
-        <button class="buttons">Comer</button>
-        <button class="buttons">Comer</button>
-        <button class="buttons">Comer</button>
-    </main>
-    
+    <div id="button-container">
+        <button class="buttons" th:each="button : ${buttons}" th:id="${button.name}" th:text="${button.name}"></button>
+    </div>
 </body>
+<script src="../static/js/script.js"></script>
+<script src="/js/script.js" th:src="@{/js/script.js}"></script>
 </html>

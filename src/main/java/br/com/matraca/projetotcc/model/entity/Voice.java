@@ -34,7 +34,7 @@ public class Voice {
     private String url;
 
     @OneToMany
-    private List<Config> configs;
+    private List<Config> config;
     
     // public Category(ButtonRequestDTO data){ //construtor para inicializar um objeto pelo Request, possibilitando a conversão
     //     this.name = data.name();

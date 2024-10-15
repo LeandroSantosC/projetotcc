@@ -10,11 +10,12 @@ body{
     flex-direction: column;
     position: relative;
     overflow: hidden;
-    height: 100vh;
+    max-height: 100vh;
     /* Fire Fox */
     scrollbar-width: thin; /* Barra de rolagem fina */
     scrollbar-color: #888 #f1f1f1; /* Cor do botão e da pista */
 }
+
 
 /* WebKit (Chrome, Safari, Edge) */
 body::-webkit-scrollbar {
@@ -137,9 +138,12 @@ header{
     padding-top: 100%; /* Faz a altura ser 100% da largura */
 }
 
-.button-container{
+#button-container{
     position: relative;
     display: flex;
+    flex-direction: row;
+    position: relative;
+    overflow: auto;
     justify-content: flex-start; /* Itens alinhados à esquerda */
     flex-wrap: wrap; /* Permite que os itens quebrem para a próxima linha */
     overflow-y: auto;

@@ -20,7 +20,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name="user")
+@Table(name="users")
 @Getter //avisando pro lombok criar em tempo de execução todas os getters dos meus atributos
 @NoArgsConstructor // avisando pro lombok criar um construtor vazio
 @AllArgsConstructor // avisando pro lombok criar um construtor com todos os atributos

@@ -18,12 +18,12 @@ public class BoardService {
         return this.repository.save(board);
     }
 
-    public Iterable<Category> getAll(){
-        return this.repository.findAll();
-    }
+    // public Iterable<Category> getAll(){
+    //     return this.repository.findAll();
+    // }
 
-    public Category getByName(String name){
-        return this.repository.findByName(name);
-    }
+    // public Category getByName(String name){
+    //     return this.repository.findByName(name);
+    // }
 
 }
