@@ -82,7 +82,7 @@ header{
     background-color: cornflowerblue;
 }
 
-.board-cards{
+#board-cards{
     display: flex;
     justify-content: flex-start;
     overflow-x: auto;
@@ -91,7 +91,7 @@ header{
     gap: 3px;
 }
 
-.board-cards button{
+#board-cards button{
     flex-shrink: 0;
     height: 100%;
     aspect-ratio: 1 / 1;
@@ -120,7 +120,7 @@ header{
     position: relative;
 }
 
-.buttons .content {
+.buttons .content, #board-cards button .content{
     position: absolute; /* Mantém o conteúdo dentro do quadrado */
     top: 0;
     left: 0;
@@ -148,4 +148,23 @@ header{
     flex-wrap: wrap; /* Permite que os itens quebrem para a próxima linha */
     overflow-y: auto;
     flex: 1;
+}
+
+.category-container{
+    display: flex;
+    position: relative;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+#category-selector{
+    position: absolute;
+    left: 0;
+    margin: 3px;
+    width: 150px;
+    height: 30px;
+    text-align: center;
+    font-size: medium;
+    
 }

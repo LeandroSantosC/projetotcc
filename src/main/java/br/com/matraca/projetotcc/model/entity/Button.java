@@ -3,15 +3,17 @@ package br.com.matraca.projetotcc.model.entity;
 import java.util.List;
 
 import org.hibernate.annotations.ManyToAny;
-import org.hibernate.annotations.NotFound;
 
-import br.com.matraca.projetotcc.model.dto.ButtonRequestDTO;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -39,16 +41,19 @@ public class Button {
     @NotEmpty
     private String sound;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
     private Category category;
 
-    @ManyToAny
+    @ManyToMany(mappedBy = "button")
     private List<User> user;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "button")
     private List<Board> board;
 
-    public Button(ButtonRequestDTO data){ //construtor para inicializar um objeto pelo Request, possibilitando a conversão
-        this.name = data.name();
+    @PrePersist
+    @PreUpdate
+    private void convertNameToLowerCase() {
+        this.name = this.name != null ? this.name.toLowerCase() : null;
     }
 }

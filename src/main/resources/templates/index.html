@@ -22,7 +22,7 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
                 <button id="backspace-button"><i class="fa-solid fa-backspace" style="font-size: 25px;"></i></button>
                 <button id="delete-button"><i class="fa-solid fa-trash" style="font-size: 25px;"></i></button>
             </div>
-            <div class="board-cards">
+            <div id="board-cards">
                 <button class="card-button">CARD</button>
             </div>
             <div class="board-buttons">
@@ -31,10 +31,23 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
             </div>
         </div>
     </header>
-
-    <h3 style="text-align: center; font-size: 30px;">Botões</h3>
+    <div class="category-container">
+        <select name="categoria" id="category-selector">
+            <option>Categoria 1</option>
+            <option value="Categoria 2">Categoria 2</option>
+        </select>
+        <h3 style="text-align: center; font-size: 30px;">Botões</h3>
+    </div>
     <div id="button-container">
-        <button class="buttons" th:each="button : ${buttons}" th:id="${button.name}" th:text="${button.name}"></button>
+        <button class="buttons" 
+                th:each="button : ${buttons}" 
+                th:id="'button-' + ${button.id}">
+            <img th:src="${button.image}"
+                th:alt="${button.name}" 
+                style="width: 20px; height: 20px;">
+            <span th:text="${button.name}"></span>
+        </button>
+
     </div>
 </body>
 <script src="../static/js/script.js"></script>
