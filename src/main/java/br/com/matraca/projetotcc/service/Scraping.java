@@ -1,12 +1,7 @@
 package br.com.matraca.projetotcc.service;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
-
-import java.lang.String;
 import java.net.MalformedURLException;
-
 import org.htmlunit.BrowserVersion;
 import org.htmlunit.BrowserVersion.BrowserVersionBuilder;
 import org.htmlunit.FailingHttpStatusCodeException;
@@ -19,7 +14,6 @@ import org.springframework.stereotype.Component;
 public class Scraping {
 
     public WebClient session;
-    public String html;
 
     private Scraping() throws FailingHttpStatusCodeException, MalformedURLException, IOException{
         BrowserVersionBuilder browser = new BrowserVersionBuilder(BrowserVersion.CHROME);

@@ -11,35 +11,33 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
     <title>Matraka</title>
 </head>
 <body>
-
     <header>
         <div class="top-bar">
-            <button id="menu-button" class="fa-solid fa-bars" style="font-size: 25px;"></button>
-            <h1 style="font-size: 30px;">MATRACA</h1>
-        </div>
-        <div id="board">
-            <div class="board-buttons">
-                <button id="backspace-button"><i class="fa-solid fa-backspace" style="font-size: 25px;"></i></button>
-                <button id="delete-button"><i class="fa-solid fa-trash" style="font-size: 25px;"></i></button>
-            </div>
-            <div id="board-cards">
-                <button class="card-button">CARD</button>
-            </div>
-            <div class="board-buttons">
-                <button id="board-access-button"><i class="fa-solid fa-pen-to-square" style="font-size: 25px;"></i></button>
-                <button id="play-button"><i class="fa-solid fa-play" style="font-size: 25px;"></i></button>
-            </div>
+            <button type="button" id="menu-button" class="fa-solid fa-bars"></button>
+            <h1 style="font-size: 8vw;">MATRACA</h1>
         </div>
     </header>
-    <div class="category-container">
-        <select name="categoria" id="category-selector">
-            <option>Categoria 1</option>
-            <option value="Categoria 2">Categoria 2</option>
-        </select>
-        <h3 style="text-align: center; font-size: 30px;">Botões</h3>
+    <div id="board">
+        <div class="board-buttons">
+            <button type="button" id="backspace-button" class="fa-solid fa-backspace"></button>
+            <button type="button" id="delete-button" class="fa-solid fa-trash"></button>
+        </div>
+        <div id="board-cards">
+        </div>
+        <div class="board-buttons">
+            <button type="button" id="board-access-button" class="fa-solid fa-pen-to-square"></button>
+            <button type="button" id="play-button" class="fa-solid fa-play"></button>
+        </div>
     </div>
-    <div id="button-container">
-        <button class="buttons" 
+     <!-- AREA DOS BOTOES -->
+     <div class="category-container">
+        <select name="categoria" id="category-selector">
+            <option th:each="category : ${categories}" th:value="${category}"><span th:text="${category}"></span></option>
+        </select>
+        <h3 style="text-align: center; font-size: 7vw;">Botões</h3>
+    </div>
+    <div id="button-content">
+        <button type="button" class="buttons" 
                 th:each="button : ${buttons}" 
                 th:id="'button-' + ${button.id}">
             <img th:src="${button.image}"
@@ -47,7 +45,80 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
                 style="width: 20px; height: 20px;">
             <span th:text="${button.name}"></span>
         </button>
+    </div>    
+    <!-- MENU -->
+    <div id="menu-container" style="display: none;">
+        <div>
+            <div id="top-menu">
+                <h3 style="flex-shrink: 1; position: relative; font-size: 7vw;">Menu</h3>
+                <button type="button" id="close-button" class="fa-solid fa-close"></button>
+            </div>
+            <div>
+                <a href="">Botões</a>
+                <a href="">Pranchas</a>
+                <a href="">Categorias</a>
+                <a href="">Configurações</a>
+                <a href="">Sair</a>
+            </div>
+        </div>
+    </div>
 
+    <div id="button-container" class="content-window">
+        <div>
+            <div style="justify-content: center; height: fit-content; overflow-y: visible;">
+                <h3 style="font-size: 5vw;">Editar Botões</h3>
+                <button type="button" id="close-button" class="fa-solid fa-close" style="font-size: 6vw;"></button>
+            </div>
+            <div>
+                <button type="button" class="fa-solid fa-plus" style="font-size: 7vw;"></button>
+                <button type="button" class="buttons-edit" 
+                        th:each="button : ${buttons}" 
+                        th:id="'button-' + ${button.id}">
+                    <img th:src="${button.image}"
+                        th:alt="${button.name}"
+                        style="width: 20px; height: 20px;">
+                    <span th:text="${button.name}"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="button-container-edit" class="content-window">
+        <div>
+            <div style="align-items: center; justify-content: center; height: fit-content; overflow-y: visible;">
+                <h3 style="font-size: 5vw;">Editar Botões</h3>
+                <button type="button" id="close-button" class="fa-solid fa-close" style="font-size: 6vw;"></button>
+            </div>
+            <form action="" method="POST" id="form-button-edit">
+                <label for="name">Nome</label>
+                    <div>
+                        <input type="text" th:value="${button.name}" name="nome" id="name"/>
+                    </div>
+                <label for="image">Imagem</label>
+                <div>
+                    <input th:if="!${button.image}" type="text" th:value="${button.image}" value="" name="imageUrl" id="imageUrl"/>
+                    <label for="imageFile" class="button-file">...</label>
+                    <input th:if="!${button.image}" type="file" th:value="${button.image}" name="imageFile" id="imageFile" style="display: none;"/>
+                    <img th:if="${button.image}" th:src="${button.image}" alt="Imagem" style="max-width: 300px;">
+                </div>
+                <label for="sound">Som</label>
+                <div>
+                    <input type="text" th:value="${button.sound}" name="soundUrl" id="soundUrl"/>
+                    <label for="soundFile" class="button-file">...</label>
+                    <input type="file" th:value="${button.sound}" name="soundFile" id="soundFile" style="display: none;"/>
+                </div>
+                <label for="category-edit">Categoria</label>
+                <div>
+                    <select name="category" id="category-edit" value="${button.category}">
+                        <option th:each="category : ${categories}" th:value="${category}"><span th:text="${category}"></span></option>
+                    </select>
+                </div>
+                <div>
+                    <button class="waves-effect waves-light btn" type="submit">Salvar</button>
+                    <button>Deletar</button>
+                </div>
+            </form>
+        </div>
     </div>
 </body>
 <script src="../static/js/script.js"></script>

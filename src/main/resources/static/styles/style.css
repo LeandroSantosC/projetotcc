@@ -10,7 +10,7 @@ body{
     flex-direction: column;
     position: relative;
     overflow: hidden;
-    max-height: 100vh;
+    height: 100%;
     /* Fire Fox */
     scrollbar-width: thin; /* Barra de rolagem fina */
     scrollbar-color: #888 #f1f1f1; /* Cor do botão e da pista */
@@ -41,22 +41,24 @@ header{
     flex-direction: column;
     position: sticky;
     top:0;
-    height: 200px;
     width: 100%;
-    z-index: 100;
+    height: 15vw;
 }
 
 #menu-button{
-    margin: 5px;
-    height: 90%;
-    width: 40px;
+    height: auto;
+    aspect-ratio: 1/1;
+    width: 13vw;
+    font-size: 7vw;
     border-radius: 20%;
     position: absolute;
-    left: 0;
+    border:#f1f1f1;
+    left: 5px;
+    top: 4px;
 }
 
 .top-bar{
-    height: 50px;
+    height: 100%;
     padding: 0 16px;
     display: flex;
     flex-direction: row;
@@ -73,12 +75,12 @@ header{
     align-items: center;
     justify-content: space-between;
     flex-direction: row;
-    position: stick;
+    position: sticky;
     gap: 5px;
-    padding-left: 5px;
-    padding-right: 5px;
-    flex: 1;
+    padding: 5px;
+    flex: 1, 0;
     width: 100%;
+    height: 40vw;
     background-color: cornflowerblue;
 }
 
@@ -92,7 +94,10 @@ header{
 }
 
 #board-cards button{
+    border-radius: 10%;
+    border: #ffffff;
     flex-shrink: 0;
+    box-sizing: border-box;
     height: 100%;
     aspect-ratio: 1 / 1;
 }
@@ -101,53 +106,62 @@ header{
     display: flex;
     flex-direction: column;
     position: relative;
-    gap: 50px;
+    gap: 9vw;
 }
 
 .board-buttons button{
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    border-radius: 30%;
+    border: #ffffff;
+    width: auto;
+    aspect-ratio: 1/1;
+    height: 13vw;
+    font-size: 7vw;
+    justify-content: center;
+    align-items: center;
 }
 
 /* FIM BOARD */
 
-.buttons{
+.buttons, #button-container div div:last-child button{
     flex: 0 1 calc(33.33% - 6px); /* 3 itens por linha */
     margin: 3px;
     padding: 5px;
     box-sizing: border-box;
     position: relative;
+    border-radius: 10%;
+    border: white;
+    aspect-ratio: 1 / 1;
 }
 
-.buttons .content, #board-cards button .content{
-    position: absolute; /* Mantém o conteúdo dentro do quadrado */
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-}
-
-.buttons::before {
-    content: "";
-    display: block;
-    padding-top: 100%; /* Faz a altura ser 100% da largura */
-}
-
-#button-container{
+#button-content, .content-window div div{
     position: relative;
     display: flex;
     flex-direction: row;
-    position: relative;
-    overflow: auto;
     justify-content: flex-start; /* Itens alinhados à esquerda */
     flex-wrap: wrap; /* Permite que os itens quebrem para a próxima linha */
     overflow-y: auto;
-    flex: 1;
+    height: auto;
+    width: 100%;
+    padding: 5px;
+    flex-shrink: 1;
+}
+
+
+#button-container div div:last-child button{
+    flex: 0 1 calc(25% - 6px)
+}
+
+.content-window div{
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    height: 80%;
+    position: relative;
+    top: 20;
+    left: 20;
+    border-radius: 5%;
+    background-color: white;
+    padding: 10px;
 }
 
 .category-container{
@@ -161,10 +175,140 @@ header{
 #category-selector{
     position: absolute;
     left: 0;
+    height: auto;
+    width: 35vw;
+    aspect-ratio: 4.3/1;
     margin: 3px;
-    width: 150px;
-    height: 30px;
     text-align: center;
-    font-size: medium;
+    font-size: 5vw;
+    flex: 1;
     
+}
+
+#menu-container, .content-window{
+    display: flex;
+    background-color: rgba(0, 0, 0, 0.5);
+    transition: opacity 0.3s ease; /* Transição suave na opacidade */
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    left: 0;
+    justify-content: center;
+    align-items: center;
+}
+
+#menu-container div{
+    display: flex;
+    background-color: white;
+    position: fixed;
+    left: 0;
+    height: 100%;
+    width: 50vw;
+    border-radius: 5%;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#close-button{
+    display: flex;
+    border-radius: 20%;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    font-size: 6vw;
+    right: 10px;
+    background-color: white;
+    border: white;
+}
+
+#menu-container div div{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    position: relative;
+    bottom: 30px;
+    flex-grow: 1;
+}
+
+#menu-container div div a{
+    float: left;
+    font-size: 7vw;
+    padding: 14px 16px;
+    text-decoration: none;
+    color: rgb(59, 59, 59);
+    transition: background-color 0;
+}
+
+#menu-container div div a:hover {
+    display: flex;
+    color: #ffffff;
+    background-color: #888;
+    width: 100%;
+    justify-content: center;
+    border-radius: 5%;
+}
+
+#menu-container div #top-menu{
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    top: 0;
+    width: 100%;
+    height: 10vw;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+}
+
+#form-button-edit{
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 100%;
+    width: 100%;
+}
+
+#form-button-edit > label{
+    font-size: 5vw;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+
+#form-button-edit div{
+    display: flex;
+    position: relative;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    height: 90vw;
+    width: 100%;
+    background-color: #555;
+}
+
+#form-button-edit input, select{
+    display: flex;
+    position: relative;
+    flex-grow: 1;
+    border-radius: 10px;
+}
+
+.button-file{
+    display: flex;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    width: 10%;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 10px;
+    font-size: 6vw;
 }

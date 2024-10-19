@@ -11,17 +11,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
-
-import br.com.matraca.projetotcc.model.dto.ButtonRequestDTO;
-import br.com.matraca.projetotcc.model.dto.ButtonResponseDTO;
 import br.com.matraca.projetotcc.model.entity.Button;
 import br.com.matraca.projetotcc.model.entity.Category;
-import br.com.matraca.projetotcc.repository.ButtonRepository;
 import br.com.matraca.projetotcc.service.ButtonService;
 import br.com.matraca.projetotcc.service.CategoryService;
 import br.com.matraca.projetotcc.service.Scraping;
-
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @Controller

@@ -3,8 +3,10 @@ const backspace_button = document.getElementById("backspace-button")
 const delete_button = document.getElementById("delete-button")
 const play_button = document.getElementById("play-button")
 const board_favorite = document.getElementById("board-access-button")
-const button_container = document.getElementById("button-container")
+const button_content = document.getElementById("button-content")
 const board_cards = document.getElementById("board-cards")
+const menu_container = document.getElementById("menu-container")
+const close_button = document.getElementById("close-button")
 
 
 let board = []
@@ -17,8 +19,35 @@ let board = []
 // })
 
 console.log("test test");
+
+
+// function loadHTML(elementId, fileName) {
+//     fetch(fileName)
+//         .then(response => {
+//             if (!response.ok) {
+//                 throw new Error('Erro ao carregar o arquivo');
+//             }
+//             return response.text();
+//         })
+//         .then(data => {
+//             document.getElementById(elementId).innerHTML = data;
+            
+//         })
+//         .catch(error => {
+//             console.error('Erro:', error);
+//         });
+// }
+
+// // Quando o documento carregar, injetar os arquivos HTML
+// window.onload = function() {
+//     loadHTML('header', 'header.html');
+//     loadHTML('board', 'board.html')
+//     loadHTML('content', 'button-content.html');
+//     loadHTML('menu', 'menu.html');
+// }
+
 //Pega os cliques no container de botoes
-button_container.addEventListener("click", function(event){
+button_content.addEventListener("click", function(event){
     //Devolve o clique só quando clicar em um objeto da classe "buttons", caso contrário retorna null
     let buttonClick = event.target.closest(".buttons");
     if(buttonClick){
@@ -72,3 +101,20 @@ play_button.addEventListener("click", function(){
     window.speechSynthesis.speak(new SpeechSynthesisUtterance(phrase));
 
 })
+
+menu_button.addEventListener("click", function(){
+    menu_container.style.display = "flex"
+})
+
+menu_container.addEventListener("click", function(event){
+    if(event.target === menu_container){
+        menu_container.style.display = "none"
+    }
+})
+
+close_button.addEventListener("click", function(){
+    menu_container.style.display = "none"
+})
+
+
+
