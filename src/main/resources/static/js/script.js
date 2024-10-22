@@ -3,11 +3,13 @@ const backspace_button = document.getElementById("backspace-button")
 const delete_button = document.getElementById("delete-button")
 const play_button = document.getElementById("play-button")
 const board_favorite = document.getElementById("board-access-button")
-const button_content = document.getElementById("button-content")
+const main_buttons = document.getElementById("main-buttons")
+const main_boards = document.getElementById("main-boards")
 const board_cards = document.getElementById("board-cards")
-const menu_container = document.getElementById("menu-container")
-const close_button = document.getElementById("close-button")
-
+const menu = document.getElementById("menu")
+const close_button = document.getElementsByClassName("close-button")
+const background_window = document.getElementsByClassName("background-window")
+const category_selector = document.getElementById("category-selector")
 
 let board = []
 
@@ -47,13 +49,12 @@ console.log("test test");
 // }
 
 //Pega os cliques no container de botoes
-button_content.addEventListener("click", function(event){
+main_buttons.addEventListener("click", function(event){
     //Devolve o clique só quando clicar em um objeto da classe "buttons", caso contrário retorna null
     let buttonClick = event.target.closest(".buttons");
     if(buttonClick){
         //Cria um novo "ditador" e pede para ele ditar o conteudo do botão clicado
         let ut = new SpeechSynthesisUtterance(buttonClick.textContent);
-        console.log(buttonClick.getAttribute("src"));
         //se ele estiver ja estiver ditando e clicar em outro botão, então cancela.
         if(window.speechSynthesis.speaking){
             window.speechSynthesis.cancel();
@@ -63,11 +64,48 @@ button_content.addEventListener("click", function(event){
     }
 })
 
+main_boards.addEventListener("click", function(event){
+    let boardClicked = event.target.closest(".boards");
+    if(boardClicked){
+        let buttons = boardClicked.querySelectorAll(".buttons");
+
+        buttons.forEach(button => {
+            addButtonToBoard(button);
+        })
+    }
+})
+
+category_selector.addEventListener("change", function(event) {
+    // Verifica se o valor selecionado é 'tudo'
+    if (category_selector.value === "tudo") {
+        // Seleciona todos os botões e exibe-os
+        let buttons = main_buttons.querySelectorAll(".buttons");
+        buttons.forEach(button => {
+            button.style.display = "flex"; // Exibe todos os botões
+        });
+    } else {
+        // Seleciona todos os botões e oculta os que não pertencem à categoria selecionada
+        let buttons = main_buttons.querySelectorAll(".buttons");
+
+        buttons.forEach(button => {
+            console.log(event.target.value)
+            console.log(button)
+            // Se o botão tem a categoria selecionada, exibe-o, caso contrário oculta
+            if (button.classList.contains(event.target.value)) {
+                button.style.display = "flex"; // Exibe o botão da categoria
+            } else {
+                button.style.display = "none"; // Oculta o botão fora da categoria
+            }
+        });
+    }
+});
+
+
 function addButtonToBoard(button){
     //clono o botao e coloco numa var
     let card = button.cloneNode(true);
-    //mudo a classe para ele ter aparecia que eu escolhi
-    card.className = "card-button"
+    //mudo a classe para ele ter aparencia que eu escolhi
+    card.className = "buttons card-button"
     //adiciono na board
     board_cards.append(card);
 }
@@ -92,7 +130,8 @@ board_cards.addEventListener("click", function(event){
 play_button.addEventListener("click", function(){
     let phrase = [];
     for(let card of board_cards.children){
-        phrase += card.textContent + " ";
+        let word = card.querySelector("span")
+        phrase += word.textContent + " ";
         console.log(phrase)
     }
     if(window.speechSynthesis.speaking){
@@ -103,18 +142,54 @@ play_button.addEventListener("click", function(){
 })
 
 menu_button.addEventListener("click", function(){
-    menu_container.style.display = "flex"
+    menu.style.display = "flex"
 })
 
-menu_container.addEventListener("click", function(event){
-    if(event.target === menu_container){
-        menu_container.style.display = "none"
+menu.addEventListener("click", function(event){
+    if(event.target === menu){
+        menu.style.display = "none"
     }
 })
 
-close_button.addEventListener("click", function(){
-    menu_container.style.display = "none"
+Array.from(close_button).forEach(element => {
+    element.addEventListener("click", function(event){
+        const container = event.target.closest('.background-window');
+
+        if (container) {
+            container.style.display = "none";
+        }
+    })
+});
+
+
+// EFEITOS
+
+// Seleciona o botão
+const rippleButtons = document.querySelectorAll('.rippleBtn');
+
+rippleButtons.forEach(rippleButton => {
+    rippleButton.addEventListener('click', function (e) {
+        // Cria a ondulação
+        const ripple = document.createElement('span');
+        ripple.classList.add('ripple');
+      
+        // Pega a posição do clique no botão
+        const rect = this.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+      
+        // Posiciona o efeito ripple
+        ripple.style.left = `${x}px`;
+        ripple.style.top = `${y}px`;
+      
+        // Adiciona o ripple no botão
+        this.appendChild(ripple);
+      
+        // Remove o ripple após a animação
+        setTimeout(() => {
+          ripple.remove();
+        }, 600); // O tempo aqui deve ser o mesmo da animação (0.6s)
+      });
+      
 })
-
-
 

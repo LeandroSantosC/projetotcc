@@ -18,10 +18,10 @@ public class BoardService {
     ButtonService button;
 
     public Board save(Board board){
-        if(board.getId() == null && repository.findByName(board.getName().toLowerCase()) != null){
-            // VERIFICAR SE VIA PRECISAR ADICIONAR ERRO NO RETORNO
-            return null;
-        }
+        // if(board.getId() == null && repository.findByName(board.getName().toLowerCase()) != null){
+        //     // VERIFICAR SE VIA PRECISAR ADICIONAR ERRO NO RETORNO
+        //     return null;
+        // }
         return this.repository.save(board);
     }
 

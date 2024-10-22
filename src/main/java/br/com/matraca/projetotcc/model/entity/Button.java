@@ -20,10 +20,12 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name="button")
 @Getter //avisando pro lombok criar em tempo de execução todas os getters dos meus atributos
+@Setter
 @NoArgsConstructor // avisando pro lombok criar um construtor vazio
 @AllArgsConstructor // avisando pro lombok criar um construtor com todos os atributos
 @EqualsAndHashCode(of = "id") //indicar que o id é a representaçao unica da entidade

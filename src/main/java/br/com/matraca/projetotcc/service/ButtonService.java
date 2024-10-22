@@ -1,5 +1,6 @@
 package br.com.matraca.projetotcc.service;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,16 +18,19 @@ public class ButtonService {
     @Autowired
     ButtonRepository repository;
 
-    public Iterable<Button> getAll(){
+    @Autowired
+    Scraping scrap;
+
+    public Iterable<Button> getAll() throws IOException{
         Iterable<Button> buttonList = repository.findAll();
         return buttonList;
     }
 
     public Button save(Button button){
-        if(button.getId() == null && repository.findByName(button.getName().toLowerCase()) != null){
-            // VERIFICAR SE VIA PRECISAR ADICIONAR ERRO NO RETORNO
-            return null;
-        }
+        // if(button.getId() == null && repository.findByName(button.getName().toLowerCase()) != null){
+        //     // VERIFICAR SE VIA PRECISAR ADICIONAR ERRO NO RETORNO
+        //     return null;
+        // }
         return this.repository.save(button);
     }
 

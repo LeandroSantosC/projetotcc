@@ -12,48 +12,86 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 </head>
 <body>
     <header>
-        <div class="top-bar">
-            <button type="button" id="menu-button" class="fa-solid fa-bars"></button>
-            <h1 style="font-size: 8vw;">MATRACA</h1>
-        </div>
+        <button type="button" id="menu-button" class="rippleBtn fa-solid fa-bars btn"></button>
+        <h1 style="font-size: 8vw;">MATRACA</h1>
+        <button type="button" id="login-button" class="rippleBtn fa-solid fa-user btn"></button>
     </header>
     <div id="board">
         <div class="board-buttons">
-            <button type="button" id="backspace-button" class="fa-solid fa-backspace"></button>
-            <button type="button" id="delete-button" class="fa-solid fa-trash"></button>
+            <button type="button" id="backspace-button" class="rippleBtn btn fa-solid fa-backspace"></button>
+            <button type="button" id="delete-button" class="rippleBtn btn fa-solid fa-trash"></button>
         </div>
         <div id="board-cards">
         </div>
         <div class="board-buttons">
-            <button type="button" id="board-access-button" class="fa-solid fa-pen-to-square"></button>
-            <button type="button" id="play-button" class="fa-solid fa-play"></button>
+            <button type="button" id="play-button" class="rippleBtn btn fa-solid fa-play"></button>
         </div>
     </div>
-     <!-- AREA DOS BOTOES -->
-     <div class="category-container">
+
+    <!-- AREA DOS BOTOES -->
+    <div class="tools-tab">
         <select name="categoria" id="category-selector">
-            <option th:each="category : ${categories}" th:value="${category}"><span th:text="${category}"></span></option>
+            <option value="tudo">Tudo</option>
+            <option 
+            th:each="category : ${categories}" 
+            th:value="'btn-category-' + ${category.id}" 
+            th:text="${category.name}"></option>
         </select>
-        <h3 style="text-align: center; font-size: 7vw;">Botões</h3>
+        <div id="search-bar">
+            <button type="button" id="btn-search" class="fa-solid fa-search"></button>
+            <input type="text">
+            <button type="button" id="del-search" class="fa-solid fa-close"></button>
+        </div>
+        <label class="switch">
+            <input type="checkbox" name="editar" id="edit-switch">
+            <span class="btn-switch fa-solid fa-pen-to-square"></span>
+        </label>
     </div>
-    <div id="button-content">
-        <button type="button" class="buttons" 
-                th:each="button : ${buttons}" 
-                th:id="'button-' + ${button.id}">
-            <img th:src="${button.image}"
-                th:alt="${button.name}" 
-                style="width: 20px; height: 20px;">
-            <span th:text="${button.name}"></span>
-        </button>
-    </div>    
+    <div class="switch-tab">
+        <label>
+        <input type="radio" name="tab-selected" value="botoes" checked><div id="tab-button">Botões</div>
+        </label>
+        <label>
+        <input type="radio" name="tab-selected" value="pranchas"><div id="tab-board">Pranchas</div>
+        </label>
+    </div>
+
+    <div class="content">
+        <div id="main-buttons" class="button-content">
+            <button type="button" th:class="'buttons rippleBtn btn-category-' + ${button.category}" 
+                    th:each="button : ${buttons}" 
+                    th:id="'button-' + ${button.id}">
+                    <img th:src="${button.image}"
+                    th:alt="${button.name}">
+                    <div>
+                        <span th:text="${button.name}"></span>
+                    </div>
+            </button>
+        </div>
+        <div id="main-boards" class="board-content">
+            <button class="boards" th:each="board : ${boards}" 
+            th:id="'board-' + ${board.id}">
+                <div>
+                    <div class="buttons" th:each="boardBtn : ${board.button}">
+                        <img th:src="${boardBtn.image}"
+                        th:alt="${boardBtn.name}">
+                        <div>
+                            <span th:text="${boardBtn.name}"></span>
+                        </div>
+                    </div>
+                </div>
+                <span th:text="${board.name}"></span>
+            </button>
+        </div>
+    </div> 
     <!-- MENU -->
-    <div id="menu-container" style="display: none;">
-        <div>
-            <div id="top-menu">
-                <h3 style="flex-shrink: 1; position: relative; font-size: 7vw;">Menu</h3>
-                <button type="button" id="close-button" class="fa-solid fa-close"></button>
+    <div id="menu" class="background-window" style="display: none;">
+        <div class="window">
+            <div class="window-title">
+                <h3 class="">Menu</h3>
+                <button type="button" class="fa-solid fa-close close-button"></button>
             </div>
-            <div>
+            <div class="menu-option">
                 <a href="">Botões</a>
                 <a href="">Pranchas</a>
                 <a href="">Categorias</a>
@@ -63,15 +101,15 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
         </div>
     </div>
 
-    <div id="button-container" class="content-window">
-        <div>
-            <div style="justify-content: center; height: fit-content; overflow-y: visible;">
-                <h3 style="font-size: 5vw;">Editar Botões</h3>
-                <button type="button" id="close-button" class="fa-solid fa-close" style="font-size: 6vw;"></button>
+    <!-- <div id="button-container" class="background-window" style="display: none;">
+        <div class="window">
+            <div class="window-title">
+                <h3>Botões</h3>
+                <button type="button" class="fa-solid fa-close close-button"></button>
             </div>
-            <div>
-                <button type="button" class="fa-solid fa-plus" style="font-size: 7vw;"></button>
-                <button type="button" class="buttons-edit" 
+            <div class="button-content">
+                <button type="button" class="fa-solid fa-plus buttons" style="font-size: 7vw;"></button>
+                <button type="button" class="buttons" 
                         th:each="button : ${buttons}" 
                         th:id="'button-' + ${button.id}">
                     <img th:src="${button.image}"
@@ -81,27 +119,28 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
                 </button>
             </div>
         </div>
-    </div>
+    </div> -->
 
-    <div id="button-container-edit" class="content-window">
-        <div>
-            <div style="align-items: center; justify-content: center; height: fit-content; overflow-y: visible;">
-                <h3 style="font-size: 5vw;">Editar Botões</h3>
-                <button type="button" id="close-button" class="fa-solid fa-close" style="font-size: 6vw;"></button>
+    <!-- <div id="button-container-edit" class="background-window" style="display: none;">
+        <div class="window">
+            <div class="window-title">
+                <button type="button" id="back-button" class="window-button fa-solid fa-backspace"></button>
+                <h3>Editar</h3>
+                <button type="button" class="close-button fa-solid fa-close "></button>
             </div>
             <form action="" method="POST" id="form-button-edit">
                 <label for="name">Nome</label>
                     <div>
                         <input type="text" th:value="${button.name}" name="nome" id="name"/>
                     </div>
-                <label for="image">Imagem</label>
+                <label for="imageUrl">Imagem</label>
                 <div>
                     <input th:if="!${button.image}" type="text" th:value="${button.image}" value="" name="imageUrl" id="imageUrl"/>
                     <label for="imageFile" class="button-file">...</label>
                     <input th:if="!${button.image}" type="file" th:value="${button.image}" name="imageFile" id="imageFile" style="display: none;"/>
-                    <img th:if="${button.image}" th:src="${button.image}" alt="Imagem" style="max-width: 300px;">
+                    <img th:if="${button.image}" th:src="${button.image}" alt="Imagem" style="max-width: 300px; display: none;">
                 </div>
-                <label for="sound">Som</label>
+                <label for="soundUrl">Som</label>
                 <div>
                     <input type="text" th:value="${button.sound}" name="soundUrl" id="soundUrl"/>
                     <label for="soundFile" class="button-file">...</label>
@@ -113,13 +152,13 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
                         <option th:each="category : ${categories}" th:value="${category}"><span th:text="${category}"></span></option>
                     </select>
                 </div>
-                <div>
-                    <button class="waves-effect waves-light btn" type="submit">Salvar</button>
-                    <button>Deletar</button>
+                <div style="background-color: white;">
+                    <button class="fa-solid fa-save" type="submit"></button>
+                    <button class="fa-solid fa-trash"></button>
                 </div>
             </form>
         </div>
-    </div>
+    </div> -->
 </body>
 <script src="../static/js/script.js"></script>
 <script src="/js/script.js" th:src="@{/js/script.js}"></script>

@@ -1,22 +1,3 @@
-*{
-    font-size: small;
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box
-}
-
-body{
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    overflow: hidden;
-    height: 100%;
-    /* Fire Fox */
-    scrollbar-width: thin; /* Barra de rolagem fina */
-    scrollbar-color: #888 #f1f1f1; /* Cor do botão e da pista */
-}
-
-
 /* WebKit (Chrome, Safari, Edge) */
 body::-webkit-scrollbar {
     width: 8px;  /* Barra de rolagem fina */
@@ -36,38 +17,124 @@ body::-webkit-scrollbar-thumb {
     background: #555; /* Cor do botão ao passar o mouse */
 }
 
-header{
+*{
+    font-size: small;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body, header{
     display: flex;
-    flex-direction: column;
-    position: sticky;
-    top:0;
+    position: relative;
     width: 100%;
+    border:transparent;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+body{
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+    height: 100vh;
+    scrollbar-width: thin; /* Barra de rolagem fina */
+    scrollbar-color: #888 #f1f1f1; /* Cor do botão e da pista */
+}
+
+header{
+    flex-direction: row;
+    position: sticky;
+    padding: 1.5vw;
+    top:0;
     height: 15vw;
+    background-color: cornflowerblue;
+}
+
+.btn, .buttons{
+    display: flex;
+    position: relative;
+    width: 13vw;
+    border: transparent;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 1;
+    border-width: 0;
+    
+    font-size: 7vw;
+    height: auto;
+    aspect-ratio: 1/1;
+    flex-wrap: nowrap;
+    border-radius: 7vw;
+    margin: 1.5vw;
+    cursor: pointer;
+    box-shadow: 0px 1px 3px 0px;
+    transition: filter 0.3s ease;
+}
+
+.buttons{
+    display: flex;
+    flex: 0 1 calc(33.33% - 2vw); /* 3 itens por linha */
+    margin: 1vw;
+    aspect-ratio: 1 / 1.25;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.card-button{
+    width: auto;
+    height: 98%;
+    flex: 0 0 auto;
+    margin: 0;
+    aspect-ratio: 1 / 1.25;
+}
+
+.buttons span{
+    font-size: clamp(5px, 3.5vw, 30px);
+    font-weight: 600;
+    overflow: visible;
+    flex-wrap: wrap;
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+.buttons div:last-child{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+}
+
+
+.buttons img{
+    flex-shrink: 0;
+    width: 100%;
+    aspect-ratio: 1/1;
+    height: auto;
+}
+
+#menu-button, #login-button{
+    width: auto;
+    height: calc(100% - 3vw);
+    aspect-ratio: 1;
+    position: absolute;
+    background-color: cornflowerblue;
+    border: transparent;
+    box-shadow: 0px 0px 0px 0px;
 }
 
 #menu-button{
-    height: auto;
-    aspect-ratio: 1/1;
-    width: 13vw;
-    font-size: 7vw;
-    border-radius: 20%;
-    position: absolute;
-    border:#f1f1f1;
-    left: 5px;
-    top: 4px;
+    left: 0px;
+    top: 0px;
 }
 
-.top-bar{
-    height: 100%;
-    padding: 0 16px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    background-color: aqua;
-    position: relative;
+#login-button{
+    right: 0px;
+    top: 0px;
 }
-
 
 /* BOARD */
 #board{
@@ -76,8 +143,7 @@ header{
     justify-content: space-between;
     flex-direction: row;
     position: sticky;
-    gap: 5px;
-    padding: 5px;
+    padding: 1.5vw 0;
     flex: 1, 0;
     width: 100%;
     height: 40vw;
@@ -86,20 +152,17 @@ header{
 
 #board-cards{
     display: flex;
+    position: relative;
+    flex-direction: row;
     justify-content: flex-start;
     overflow-x: auto;
     height: 100%;
-    padding: 3px;
-    gap: 3px;
+    gap: 5px;
+    scrollbar-width: none;
 }
 
-#board-cards button{
-    border-radius: 10%;
-    border: #ffffff;
-    flex-shrink: 0;
-    box-sizing: border-box;
-    height: 100%;
-    aspect-ratio: 1 / 1;
+#board-cards::-webkit-scrollbar{
+    display: none; /* Esconde a barra de rolagem */
 }
 
 .board-buttons{
@@ -109,31 +172,28 @@ header{
     gap: 9vw;
 }
 
-.board-buttons button{
-    border-radius: 30%;
-    border: #ffffff;
-    width: auto;
-    aspect-ratio: 1/1;
-    height: 13vw;
-    font-size: 7vw;
-    justify-content: center;
-    align-items: center;
-}
-
 /* FIM BOARD */
 
-.buttons, #button-container div div:last-child button{
-    flex: 0 1 calc(33.33% - 6px); /* 3 itens por linha */
-    margin: 3px;
-    padding: 5px;
-    box-sizing: border-box;
+#btn-botoes, #btn-pranchas{
+    display: flex;
     position: relative;
-    border-radius: 10%;
-    border: white;
-    aspect-ratio: 1 / 1;
+    border:transparent;
+    background-color: transparent;
 }
 
-#button-content, .content-window div div{
+.tools-tab{
+    display: flex;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    width: 100%;
+    height: 10vw;
+    justify-content: space-around;
+    margin: 1.5vw 0;
+}
+
+.button-content{
     position: relative;
     display: flex;
     flex-direction: row;
@@ -142,50 +202,216 @@ header{
     overflow-y: auto;
     height: auto;
     width: 100%;
-    padding: 5px;
+    padding: 1.5vw;
     flex-shrink: 1;
+    scrollbar-width: none;
 }
 
-
-#button-container div div:last-child button{
-    flex: 0 1 calc(25% - 6px)
+.board-content{
+    position: relative;
+    display: none;
+    flex-direction: column;
+    justify-content: flex-start; /* Itens alinhados à esquerda */
+    flex-wrap: nowrap; /* Permite que os itens quebrem para a próxima linha */
+    overflow-y: auto;
+    height: auto;
+    width: 100%;
+    padding: 1.5vw;
+    flex-shrink: 1;
+    scrollbar-width: none;
 }
 
-.content-window div{
+.boards{
     display: flex;
     flex-direction: column;
-    width: 80%;
-    height: 80%;
-    position: relative;
-    top: 20;
-    left: 20;
-    border-radius: 5%;
-    background-color: white;
-    padding: 10px;
+    height: fit-content;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 1vw;
+    gap: 1.5vw;
+    border-radius: 6vw;
+    border: transparent;
+    box-shadow: 0px 1px 3px 0px;
+}
+.boards div{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    height: auto;
+    width: 100%;
 }
 
-.category-container{
+.boards span{
+    font-size: 3.5vw;
+    text-wrap: wrap;
+    width: 100%;
+}
+
+.boards div div{
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    height: auto;
+    border-radius: 4vw;
+    flex-shrink: 1;
+    flex-basis: calc(20% - 2vw);
+}
+
+.content{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: auto;
+    overflow-y: auto;
+}
+
+.button-content::-webkit-scrollbar{
+    display: none;
+}
+
+#category-selector, #search-bar, #search-bar input{
     display: flex;
     position: relative;
+    height: 100%;
+    width: 35%;
+    margin: 3px;
+    border-radius: 30px;
+    text-align: center;
+    font-size: clamp(5px, 3vw, 30px);
+    font-weight: 600;
+    flex-grow: 0;
+    flex-shrink: 1;
+    border: transparent;
+    background-color: #f1f1f1;
     flex-direction: row;
+    outline: none;
+}
+
+#btn-search, #del-search{
+    display: flex;
+    position: relative;
     align-items: center;
     justify-content: center;
+    padding: 1.5vw;
+    border: transparent;
+    border-radius: 30px;
+    font-size: 3.5vw;
+    height: 100%;
+    width: auto;
+    flex-grow: 1;
 }
 
-#category-selector{
-    position: absolute;
-    left: 0;
-    height: auto;
-    width: 35vw;
-    aspect-ratio: 4.3/1;
-    margin: 3px;
-    text-align: center;
-    font-size: 5vw;
+#btn-search{
+    left: 1vw;
+}
+
+#del-search{
+    right: 1vw;
+}
+
+#search-bar input{
+    display: flex;
+    position: relative;
+    height: 100%;
+    width: 100%;
+    padding-left: 10px;
+    text-align: start;
+    background-color: transparent;
+    border: transparent;
+    margin: 0;
+}
+
+.switch-tab{
+    display: flex;
+    position: relative;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+    height: 8vw;
+    margin-top: 1vw;
+    padding: 2vw;
+}
+
+.switch-tab input{
+    display: none;
+}
+
+.switch-tab div{
+    font-size: 6vw;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.switch-tab label{
     flex: 1;
-    
+    text-align: center;
 }
 
-#menu-container, .content-window{
+#tab-button{
+    transform: translateX(-10%);
+}
+
+#tab-board{
+    transform: translateX(10%);
+}
+
+.switch-tab input:checked + #tab-button{
+    transform: translateX(50%);
+}
+
+.switch-tab input:checked + #tab-board{
+    transform: translateX(-50%);
+}
+
+.switch-tab input:checked + div{
+    font-size: 9vw;
+    color: #2196F3;
+    text-decoration: underline #2196F3 2px;
+    position: relative;
+    cursor: pointer;
+    transition: 0.4s;
+}
+
+ /* Estilo do botão de liga/desliga (on/off) */
+ .switch {
+    position: relative;
+    display: inline-block;
+    height: 100%;
+    width: auto;
+    aspect-ratio: 1/1;
+  }
+
+  .switch input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .btn-switch {
+    display: block;
+    text-align: center;
+    align-content: center;
+    font-size: 3.5vw;
+    position: relative;
+    cursor: pointer;
+    height: 100%;
+    width: auto;
+    aspect-ratio: 1;
+    background-color:#f1f1f1;
+    border: transparent;
+    transition: 0.4s;
+    border-radius: 50%;
+  }
+
+  input:checked + .btn-switch {
+    background-color: #2196F3;
+  }
+
+  /* FIM BOTAO ON-OFF */
+
+.background-window{
     display: flex;
     background-color: rgba(0, 0, 0, 0.5);
     transition: opacity 0.3s ease; /* Transição suave na opacidade */
@@ -197,30 +423,65 @@ header{
     align-items: center;
 }
 
-#menu-container div{
-    display: flex;
-    background-color: white;
-    position: fixed;
-    left: 0;
-    height: 100%;
-    width: 50vw;
-    border-radius: 5%;
-    justify-content: flex-start;
-    align-items: center;
-    flex-direction: column;
-    overflow: hidden;
+.window .buttons{
+    flex: 0 1 calc(25% - 6px);
 }
 
-#close-button{
+.window{
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    height: 80vh;
+    position: relative;
+    top: 20;
+    left: 20;
+    border-radius: 30px;
+    background-color: white;
+    padding: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.window-title{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: fit-content;
+    width: 100%;
+    overflow-y: visible;
+}
+
+.window-title h3{
+    font-size: clamp(20px, 8vw, 50px);
+}
+
+.window-button, .close-button{
     display: flex;
     border-radius: 20%;
     align-items: center;
     justify-content: center;
     position: absolute;
-    font-size: 6vw;
+    font-size: clamp(15px, 6vw, 30px);
     right: 10px;
-    background-color: white;
-    border: white;
+    background-color: transparent;
+    border: transparent;
+}
+
+#back-button{
+    left: 10px;
+}
+
+.menu-option{
+    display: flex;
+    position: relative;
+    width: 100%;
+    height: auto;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
 }
 
 #menu-container div div{
@@ -232,9 +493,9 @@ header{
     flex-grow: 1;
 }
 
-#menu-container div div a{
+.menu-option a{
     float: left;
-    font-size: 7vw;
+    font-size: clamp(20px, 7vw, 40px);
     padding: 14px 16px;
     text-decoration: none;
     color: rgb(59, 59, 59);
@@ -250,36 +511,26 @@ header{
     border-radius: 5%;
 }
 
-#menu-container div #top-menu{
-    display: flex;
-    flex-direction: row;
-    position: relative;
-    top: 0;
-    width: 100%;
-    height: 10vw;
-    justify-content: center;
-    align-items: center;
-    z-index: 1;
-}
-
 #form-button-edit{
     display: flex;
     position: relative;
     flex-direction: column;
-    justify-content: space-around;
-    height: 100%;
+    flex-grow: 1;
+    justify-content: space-between;
+    height: 80%;
     width: 100%;
 }
 
 #form-button-edit > label{
-    font-size: 5vw;
+    font-size: clamp(20px, 6vw, 30px);
     position: relative;
     width: 100%;
-    height: 100%;
     flex-direction: column;
     align-items: center;
     display: flex;
+    flex-grow: 0;
     justify-content: center;
+
 }
 
 #form-button-edit div{
@@ -287,28 +538,83 @@ header{
     position: relative;
     flex-direction: row;
     flex-wrap: nowrap;
-    justify-content: center;
-    height: 90vw;
+    justify-content: space-around;
     width: 100%;
-    background-color: #555;
+    flex-basis: clamp(40px, 50px, 60px);
+    flex-shrink: 1;
+    overflow: hidden;
+    justify-self: flex-start;
+    margin-bottom: clamp(0px, 5px, 10px);
+    background-color: #f0f0f0;
+    border-radius: 30px;
 }
 
-#form-button-edit input, select{
+#form-button-edit input, select, img{
+    outline: none;
     display: flex;
     position: relative;
     flex-grow: 1;
-    border-radius: 10px;
+    font-size: 2em;
+    overflow: hidden;
+    margin: 0px 10px;
+    background-color: #f0f0f0;
+    border: #f0f0f0;
 }
 
 .button-file{
     display: flex;
     position: relative;
+    right: 2px;
     justify-content: center;
     align-items: center;
-    width: 10%;
+    width: auto;
+    margin-left: 3px;
+    aspect-ratio: 1/1;
     cursor: pointer;
-    background-color: #4CAF50;
+    background-color: black;
     color: white;
-    border-radius: 10px;
-    font-size: 6vw;
+    border-radius: 50%;
+    font-size: clamp(10px, 6vw, 30px);
 }
+
+#form-button-edit button{
+    width: 20vw;
+    border-radius: 30px;
+    background-color: black;
+    color: white;
+    border: transparent;
+    font-size: 25px;
+}
+
+.buttons:hover, .btn:hover, .card-button:hover{
+    filter: brightness(1.2); /* Aumenta o brilho, tornando a cor mais clara */
+}
+
+/* Ripple Effect (ondulação) */
+
+#play-button{
+    background-color: #2196F3;
+}
+
+#delete-button, #backspace-button{
+    background-color: rgb(252, 102, 102);
+}
+
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: white;
+    width: 20px;
+    height: 20px;
+    animation: ripple-effect 0.6s linear;
+    transform: scale(0); /* Começa pequeno */
+    pointer-events: none; /* Não interferir em outros eventos de clique */
+    opacity: 0.7;
+  }
+
+@keyframes ripple-effect {
+    to {
+      transform: scale(15); /* Aumenta até cobrir toda a área */
+      opacity: 0; /* Desaparece gradualmente */
+    }
+  }

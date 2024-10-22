@@ -8,6 +8,7 @@ import org.htmlunit.FailingHttpStatusCodeException;
 import org.htmlunit.WebClient;
 import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlPage;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -25,12 +26,12 @@ public class Scraping {
         session.getOptions().setThrowExceptionOnFailingStatusCode(false);
     }
 
-
+    @Async
     public String getImage(String buttonName) throws IOException {
         String url = "https://beta.arasaac.org/pictograms/search/" + buttonName; 
 
             HtmlPage page = this.session.getPage(url);
-            session.waitForBackgroundJavaScript(1000);
+            session.waitForBackgroundJavaScript(4000);
 
             if (page != null) {
                 HtmlElement gallery = page.getFirstByXPath("//ul[contains(@class, 'my-gallery-class')]/li[1]/div/a/div/img[1]");

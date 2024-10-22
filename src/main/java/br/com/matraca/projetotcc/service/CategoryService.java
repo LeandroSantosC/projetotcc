@@ -23,10 +23,10 @@ public class CategoryService {
     ButtonService button;
 
     public Category save(Category category){
-        if(category.getId() == null && repository.findByName(category.getName().toLowerCase()) != null){
-            // VERIFICAR SE VIA PRECISAR ADICIONAR ERRO NO RETORNO
-            return null;
-        }
+        // if(category.getId() == null && repository.findByName(category.getName().toLowerCase()) != null){
+        //     // VERIFICAR SE VIA PRECISAR ADICIONAR ERRO NO RETORNO
+        //     return null;
+        // }
         return this.repository.save(category);
     }
 
