@@ -13,7 +13,7 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <body>
     <header>
         <button type="button" id="menu-button" class="rippleBtn fa-solid fa-bars btn"></button>
-        <h1 style="font-size: 8vw;">MATRACA</h1>
+        <h1 style="font-size: 5vh;">MATRACA</h1>
         <button type="button" id="login-button" class="rippleBtn fa-solid fa-user btn"></button>
     </header>
     <div id="board">
@@ -30,7 +30,7 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
     <!-- AREA DOS BOTOES -->
     <div class="tools-tab">
-        <select name="categoria" id="category-selector">
+        <select name="categoria" class="category-selector" id="category-selector">
             <option value="tudo">Tudo</option>
             <option 
             th:each="category : ${categories}" 
@@ -38,7 +38,7 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
             th:text="${category.name}"></option>
         </select>
         <div id="search-bar">
-            <button type="button" id="btn-search" class="fa-solid fa-search"></button>
+            <div id="btn-search" class="fa-solid fa-search"></div>
             <input type="text">
             <button type="button" id="del-search" class="fa-solid fa-close"></button>
         </div>
@@ -49,24 +49,40 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
     </div>
     <div class="switch-tab">
         <label>
-        <input type="radio" name="tab-selected" value="botoes" checked><div id="tab-button">Botões</div>
+        <input type="radio" name="tab-select" value="botoes" checked><div id="tab-button">Botões</div>
         </label>
         <label>
-        <input type="radio" name="tab-selected" value="pranchas"><div id="tab-board">Pranchas</div>
+        <input type="radio" name="tab-select" value="pranchas"><div id="tab-board">Pranchas</div>
         </label>
     </div>
 
-    <div class="content">
+    <div id="content">
         <div id="main-buttons" class="button-content">
-            <button type="button" th:class="'buttons rippleBtn btn-category-' + ${button.category}" 
-                    th:each="button : ${buttons}" 
-                    th:id="'button-' + ${button.id}">
+            <div type="button" class="btn rippleBtn" id="add-button">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1264/1264564.png"
+                    alt="+">
+            </div>
+            <div th:class="'buttons btn-category-' + ${button.category.id} + (${button.isVisible} ? '' : ' invisible')"
+                th:each="button : ${buttons}" 
+                th:id="${button.id}"
+                th:styleappend="'order:' + ${button.position} + '; '"
+                >
+                <div class="btn-content rippleBtn">
                     <img th:src="${button.image}"
-                    th:alt="${button.name}">
+                    th:alt="${button.name}" draggable="false">
                     <div>
                         <span th:text="${button.name}"></span>
                     </div>
-            </button>
+                </div>
+                <div class="card-options">
+                    <button type="button" class="btn edit-card-btn fa-solid fa-pen-to-square"></button>
+                    <label class="btn show-card-btn">
+                        <input type="checkbox" style="opacity: 0; position: absolute; cursor: pointer;" th:checked="${button.visible}">
+                        <span class="fa-solid fa-eye"></span>
+                    </label>
+                    <button type="button" th:onclick="deletar(${button.id})" class="btn del-card-btn fa-solid fa-trash"></button>
+                </div>
+            </div>
         </div>
         <div id="main-boards" class="board-content">
             <button class="boards" th:each="board : ${boards}" 
@@ -97,6 +113,36 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
                 <a href="">Categorias</a>
                 <a href="">Configurações</a>
                 <a href="">Sair</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="background-window" style="display: flex;">
+        <div id="form-button-edit">
+            <div class="button-edit">
+                <div class="btn-content rippleBtn">
+                    <img th:src="button.image"
+                    th:alt="button.name" draggable="false">
+                    <div>
+                        <input th:value="button.name"></input>
+                    </div>
+                </div>
+            </div>
+            <select name="categoria" class="category-selector" id="category-edit">
+                <option>ALGUM</option>
+                <option
+                th:each="category : ${categories}"
+                th:value="'btn-category-' + ${category.id}" 
+                th:text="${category.name}"></option>
+            </select>
+            <div id="sound-edit">
+                <button class="fa-solid fa-microphone btn" id="record-sound-btn"></button>
+                <span>Grave ou Selecione</span>
+                <button class="fa-solid fa-paperclip btn" id="select-sound-btn"></button>
+            </div>
+            <div style="display: flex;">
+                <button class="btn" id="discard-btn"></button>
+                <button class="btn" id="save-btn"></button>
             </div>
         </div>
     </div>

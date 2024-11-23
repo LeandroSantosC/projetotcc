@@ -17,8 +17,6 @@ import br.com.matraca.projetotcc.model.entity.User;
 @Repository
 public interface ButtonRepository extends JpaRepository<Button, Long>{ //porque tem que ser interface? -- preciso lembrar sobre <A,A>
 
-    Iterable<Button> findAllByUser(User user);
-    Iterable<Button> findAllByBoard(Board board);
     Iterable<Button> findAllByCategory(Category category);
     Optional<Button> findByName(String name);
     List<Button> findByNameContaining(String name);

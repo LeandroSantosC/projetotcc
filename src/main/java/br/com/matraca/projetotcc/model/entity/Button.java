@@ -1,16 +1,12 @@
 package br.com.matraca.projetotcc.model.entity;
 
-import java.util.List;
-
-import org.hibernate.annotations.ManyToAny;
-
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
@@ -43,19 +39,26 @@ public class Button {
     @NotEmpty
     private String sound;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.EAGER) // CASCADE MUITO IMPORTANTE PARA PERSISTENCIA
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @ManyToMany(mappedBy = "button")
-    private List<User> user;
+    @NotEmpty
+    private int position;
 
-    @ManyToMany(mappedBy = "button")
-    private List<Board> board;
+    @NotEmpty
+    private boolean isVisible;
 
     @PrePersist
     @PreUpdate
     private void convertNameToLowerCase() {
         this.name = this.name != null ? this.name.toLowerCase() : null;
     }
+
+    @Override
+    public String toString() {
+        return "Button [id=" + id + ", name=" + name + ", image=" + image + ", sound=" + sound + ", category="
+                + category + ", position=" + position + ", isVisible=" + isVisible + "]";
+    }
+
 }

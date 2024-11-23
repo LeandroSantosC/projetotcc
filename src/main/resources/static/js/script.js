@@ -10,6 +10,12 @@ const menu = document.getElementById("menu")
 const close_button = document.getElementsByClassName("close-button")
 const background_window = document.getElementsByClassName("background-window")
 const category_selector = document.getElementById("category-selector")
+const tab_button = document.getElementById("tab-button")
+const tab_board = document.getElementById("tab-board")
+const edit_switch = document.getElementById("edit-switch")
+const add_button = document.getElementById("add-button")
+const card_options = document.getElementsByClassName("card-options")
+const content = document.getElementById('content')
 
 let board = []
 
@@ -48,10 +54,32 @@ console.log("test test");
 //     loadHTML('menu', 'menu.html');
 // }
 
+document.addEventListener('DOMContentLoaded', function() {
+    // Código a ser executado quando a página for carregada
+    let invisibles = content.querySelectorAll('.invisible')
+        invisibles.forEach(element => {
+            element.style.display = "none"
+    })
+
+    sortDivsByOrder();
+});
+
+function sortDivsByOrder() {
+    const boxes = Array.from(main_buttons.children); // Seleciona todas as divs dentro do container
+    
+    // Ordena as divs pela propriedade 'order'
+    boxes.sort((a, b) => {
+        return parseInt(a.style.order || 0) - parseInt(b.style.order || 0); // Ordena pela propriedade order
+    });
+
+    // Reorganiza o DOM de acordo com a ordem
+    boxes.forEach(box => main_buttons.appendChild(box)); // Reinsere as divs ordenadas no container
+}
+
 //Pega os cliques no container de botoes
 main_buttons.addEventListener("click", function(event){
     //Devolve o clique só quando clicar em um objeto da classe "buttons", caso contrário retorna null
-    let buttonClick = event.target.closest(".buttons");
+    let buttonClick = event.target.closest(".btn-content");
     if(buttonClick){
         //Cria um novo "ditador" e pede para ele ditar o conteudo do botão clicado
         let ut = new SpeechSynthesisUtterance(buttonClick.textContent);
@@ -62,7 +90,60 @@ main_buttons.addEventListener("click", function(event){
         window.speechSynthesis.speak(ut);
         addButtonToBoard(buttonClick);
     }
+
+    let show_card_btn = event.target.closest(".show-card-btn")
+
+    if(show_card_btn){
+        let input = show_card_btn.querySelector("input[type='checkbox']");
+
+        if(input && input.checked){
+            show_card_btn.parentElement.parentElement.classList.remove('invisible')
+            show_card_btn.parentElement.parentElement.style.border = "0.5vh outset cornflowerblue";
+        }
+        else{
+            show_card_btn.parentElement.parentElement.classList.add('invisible')
+            show_card_btn.parentElement.parentElement.style.border = "";
+        }
+        attOrder();
+    }
+
+    let del_card_btn = event.target.closest(".del-card-btn")
+
+    if(del_card_btn){
+        let button = del_card_btn.parentElement.parentElement.id;
+        deletar(button);
+    }
+
+
+
+
 })
+
+// Dados a serem enviados para o 
+function atualizarDados(botao, posicao, visivel){
+    const data = {
+        id: botao,
+        position: posicao,
+        visible: visivel
+      };
+      
+      // Usando o fetch para enviar os dados
+      fetch('https://example.com/api/submit', {
+        method: 'POST', // Método HTTP
+        headers: {
+          'Content-Type': 'application/json' // Indicando que os dados são no formato JSON
+        },
+        body: JSON.stringify(data) // Convertendo o objeto para uma string JSON
+      })
+      .then(response => response.json()) // Convertendo a resposta em JSON
+      .then(data => {
+        console.log("Success:", data); // Manipule a resposta do servidor
+      })
+      .catch((error) => {
+        console.error("Error:", error); // Manipule qualquer erro
+      });
+}
+  
 
 main_boards.addEventListener("click", function(event){
     let boardClicked = event.target.closest(".boards");
@@ -100,6 +181,15 @@ category_selector.addEventListener("change", function(event) {
     }
 });
 
+tab_button.addEventListener("click", function(){
+    main_buttons.style.display = "flex"
+    main_boards.style.display = "none"
+})
+
+tab_board.addEventListener("click", function(){
+    main_buttons.style.display = "none"
+    main_boards.style.display = "flex"
+})
 
 function addButtonToBoard(button){
     //clono o botao e coloco numa var
@@ -142,6 +232,7 @@ play_button.addEventListener("click", function(){
 })
 
 menu_button.addEventListener("click", function(){
+    sendChangesOnLogout();
     menu.style.display = "flex"
 })
 
@@ -192,4 +283,296 @@ rippleButtons.forEach(rippleButton => {
       });
       
 })
+
+// -------------------------SWITCH E CARD OPTIONS----------------------------------------
+
+edit_switch.addEventListener('change', (event) => {
+
+    if (event.target.checked){
+        let invisibles = content.querySelectorAll('.invisible')
+        invisibles.forEach(element => {
+            element.style.display = "flex"
+        })
+
+        add_button.style.display = "flex";
+        Array.from(card_options).forEach(element => {
+            element.style.display = "flex";
+            element.parentElement.style.border = "0.5vh outset cornflowerblue"
+            element.parentElement.setAttribute('draggable', true);
+        })
+    }
+    else{
+        let invisibles = content.querySelectorAll('.invisible')
+        invisibles.forEach(element => {
+            element.style.display = "none"
+        })
+
+        add_button.style.display = "none";
+        Array.from(card_options).forEach(element => {
+            element.style.display = "none";
+            element.parentElement.style.border = ""
+            element.parentElement.setAttribute('draggable', false);
+        })
+    }
+})
+
+main_buttons.addEventListener('dragstart', (e) => {
+    e.target.classList.add('dragging');
+})
+
+main_buttons.addEventListener('dragend', (e) => {
+    e.target.classList.remove('dragging');
+})
+
+let isAnimating = false;
+
+main_buttons.addEventListener('dragover', (button) => {
+    ordenar(button);
+})
+
+function attOrder(){
+    let buttons = main_buttons.querySelectorAll('.buttons')
+    const dataToSend = [];
+
+    buttons.forEach((button, index) => {
+        button.style.order = index + 1;
+        
+        const visivel = (!button.classList.contains('invisible'));
+        // Prepara os dados para envio
+        const id = button.id; // Supondo que cada botão tenha um id único
+        dataToSend.push({ 
+            id: id, 
+            position: index + 1, 
+            isVisible: visivel
+        });
+    })
+
+    saveChangeInCache(dataToSend);
+}
+
+function saveChangeInCache(changes) {
+    let cachedChanges = JSON.parse(localStorage.getItem('buttonChanges')) || [];
+    
+    changes.forEach(change => {
+        const existing = cachedChanges.find(c => c.id === change.id);
+        if (existing) {
+            existing.position = change.position;
+            existing.isVisible = change.isVisible;
+        } else {
+            cachedChanges.push(change);
+        }
+    });
+
+    localStorage.setItem('buttonChanges', JSON.stringify(cachedChanges));
+    console.log("ALTERAÇÃO NO MEIO" + JSON.stringify(cachedChanges));
+}
+
+function sendChangesOnLogout() {
+    const cachedChanges = JSON.parse(localStorage.getItem('buttonChanges')) || [];
+
+    return new Promise((resolve, reject) => {
+        if (cachedChanges.length > 0) {
+            fetch('/button/update-layout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(cachedChanges),
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log("Alterações salvas com sucesso!");
+                    localStorage.removeItem('buttonChanges');
+                    window.location.reload();
+                    resolve(); // Finaliza a Promise
+                } else {
+                    reject("Erro ao salvar alterações."); // Rejeita a Promise
+                }
+            })
+            .catch(error => {
+                reject(error); // Rejeita a Promise em caso de erro
+            });
+        } else {
+            resolve(); // Se não houver alterações, a Promise é resolvida imediatamente
+        }
+    });
+}
+
+window.onbeforeunload = function(event) {
+    sendChangesOnLogout();
+};
+
+function ordenar(event) {
+    event.preventDefault();
+
+    const elementoArrastado = main_buttons.querySelector('.dragging');
+    const alvo = event.target.closest('.buttons');
+
+    if(alvo !== isAnimating){
+        if (alvo && alvo !== elementoArrastado) {
+            // Obtém a posição do elemento arrastado e do alvo
+            const buttons = Array.from(main_buttons.children);
+            const arrastadoIndex = Array.from(main_buttons.children).indexOf(elementoArrastado);
+            const alvoIndex = Array.from(main_buttons.children).indexOf(alvo);
+
+            // Determinar os elementos entre o arrastado e o alvo
+            const intermediarios = buttons.slice(
+                Math.min(arrastadoIndex, alvoIndex) + 1,
+                Math.max(arrastadoIndex, alvoIndex)
+            );
+
+            // Verifica a relação entre os índices
+            if (arrastadoIndex < alvoIndex) {
+                // Se o elemento arrastado está antes do alvo, mova-o depois do alvo
+                main_buttons.insertBefore(elementoArrastado, alvo.nextSibling);
+                alvo.classList.add("moveright"); // Animação para direita
+                intermediarios.forEach((button) => {
+                    button.classList.add("moveright");
+                    setTimeout(() => {
+                        button.classList.remove("moveright");
+                    }, 500)
+                }); 
+                isAnimating = alvo;
+            } else {
+                // Se o elemento arrastado está depois do alvo, mova-o antes do alvo
+                main_buttons.insertBefore(elementoArrastado, alvo);
+                alvo.classList.add("moveleft"); // Animação para esquerda
+                intermediarios.forEach((button) => {
+                    button.classList.add("moveleft");
+                    setTimeout(() => {
+                        button.classList.remove("moveleft");
+                    }, 500)
+                });
+                isAnimating = alvo;
+            }
+
+            alvo.addEventListener("animationend", function onAnimationEnd() {
+                alvo.classList.remove("moveright", "moveleft");
+                intermediarios.forEach((button) => {
+                    button.classList.remove("moveright", "moveleft");
+                });
+                alvo.removeEventListener("animationend", onAnimationEnd); // Remove o evento para evitar duplicação
+                isAnimating = false;
+            });
+
+        }
+    }
+
+    attOrder(); // Atualiza as ordens
+}
+
+//------------------------------- DELETE BUTTON -----------------------------
+
+function deletar(id) {
+    // Exibe a caixa de confirmação
+    // Swal.fire({
+    //     title: 'Você tem certeza?',
+    //     text: "Esta ação não pode ser desfeita!",
+    //     icon: 'warning',
+    //     showCancelButton: true,
+    //     confirmButtonText: 'Sim, excluir!',
+    //     cancelButtonText: 'Cancelar'
+    // }).then((result) => {
+    //     if (result.isConfirmed) {
+    //         // Caso confirmado, chama a função para excluir
+    //         excluirItem(id);
+    //     }
+    // });
+
+    const confirmar = confirm("Você tem certeza que deseja excluir este item?");
+    
+    if (confirmar) {
+        // O usuário clicou em "OK", então faça a exclusão (por exemplo, enviando uma requisição para o servidor)
+        excluirItem(id);
+        attOrder();
+    } else {
+        // O usuário clicou em "Cancelar", então nada acontece
+        console.log("Exclusão cancelada.");
+    }
+}
+
+function excluirItem(id) {
+    fetch(`/button/${id}`, {
+        method: 'DELETE',
+    })
+    // .then(response => {
+    //     if (response.ok) {
+    //         Swal.fire(
+    //             'Excluído!',
+    //             'O item foi excluído com sucesso.',
+    //             'success'
+    //         );
+    //         location.reload(); // Recarrega a página para refletir a exclusão
+    //     } else {
+    //         Swal.fire(
+    //             'Erro!',
+    //             'Houve um erro ao excluir o item.',
+    //             'error'
+    //         );
+    //     }
+    // })
+    // .catch(error => {
+    //     console.error("Erro de rede:", error);
+    //     Swal.fire(
+    //         'Erro!',
+    //         'Houve um erro ao processar a requisição.',
+    //         'error'
+    //     );
+    // });
+    .then(response => {
+        if (response.ok) {
+            alert("Item excluído com sucesso!");
+            location.reload();  // Recarrega a página para refletir a exclusão
+        } else {
+            alert("Erro ao excluir o item.");
+        }
+    })
+    .catch(error => {
+        console.error("Erro de rede:", error);
+    });
+}
+
+
+
+//------------------------------- SEARCH BAR --------------------------------
+
+// Selecionando elementos da search-bar
+const searchInput = document.querySelector("#search-bar input");
+
+// Selecionando os itens que serão filtrados
+const items = document.querySelectorAll(".buttons"); // Ajuste o seletor para os seus botões/cards
+const del_search = document.getElementById("del-search");
+
+// Lógica de busca em tempo real
+searchInput.addEventListener("input", () => {
+  const searchValue = searchInput.value.toLowerCase().trim();
+  if(searchInput.value != ""){
+    del_search.style.display = "flex";
+  }
+  else{
+    del_search.style.display = "none";
+  }
+
+  items.forEach((item) => {
+    const itemText = item.textContent.toLowerCase();
+
+    if (itemText.includes(searchValue)) {
+      item.style.display = ""; // Mostra o item
+    } else {
+      item.style.display = "none"; // Esconde o item
+    }
+  });
+});
+
+del_search.addEventListener("click", () => {
+    searchInput.value = "";
+    del_search.style.display = "none";
+
+    items.forEach((item) => {
+        item.style.display = ""; // Mostra todos os itens novamente
+    });
+})
+
+//---------------------------- BUTTON OPTIONS ----------------------------------
+
 

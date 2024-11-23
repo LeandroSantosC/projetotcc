@@ -31,10 +31,6 @@ public class UserService {
         return this.repository.findByEmail(email);
     }
 
-    public Iterable<Button> getAllButtons(User user){
-        return button.getAllByUser(user);
-    }
-
     public Iterable<Board> getAllBoards(User user){
         return board.getAllByUser(user);
     }

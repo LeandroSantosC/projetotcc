@@ -2,13 +2,13 @@ package br.com.matraca.projetotcc.service;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+
 import org.htmlunit.BrowserVersion;
 import org.htmlunit.BrowserVersion.BrowserVersionBuilder;
 import org.htmlunit.FailingHttpStatusCodeException;
 import org.htmlunit.WebClient;
 import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlPage;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -26,7 +26,6 @@ public class Scraping {
         session.getOptions().setThrowExceptionOnFailingStatusCode(false);
     }
 
-    @Async
     public String getImage(String buttonName) throws IOException {
         String url = "https://beta.arasaac.org/pictograms/search/" + buttonName; 
 

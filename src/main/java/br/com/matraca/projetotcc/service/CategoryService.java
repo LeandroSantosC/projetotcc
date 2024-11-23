@@ -6,11 +6,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.com.matraca.projetotcc.model.entity.Board;
 import br.com.matraca.projetotcc.model.entity.Button;
 import br.com.matraca.projetotcc.model.entity.Category;
 import br.com.matraca.projetotcc.model.entity.User;
-import br.com.matraca.projetotcc.repository.ButtonRepository;
 import br.com.matraca.projetotcc.repository.CategoryRepository;
 
 @Service
@@ -30,11 +28,6 @@ public class CategoryService {
         return this.repository.save(category);
     }
 
-    public void addButton(Category category, Iterable<Button> buttons){
-        category.addButton(buttons);
-        repository.save(category);
-    }
-
     public Iterable<Button> getAllButtons(Category category){
         return button.getAllByCategory(category);
     }
@@ -43,16 +36,16 @@ public class CategoryService {
         return this.repository.findAll();
     }
 
-    public List<Category> getByName(String name){
+    public Optional<Category> getByName(String name){
+        return this.repository.findByName(name);
+    }
+
+    public List<Category> getByNameContaining(String name){
         return this.repository.findByNameContaining(name);
     }
 
     public Optional<Category> getById(Long id){
         return this.repository.findById(id);
-    }
-
-    public Iterable<Category> getByUser(User user){
-        return this.repository.findByUser(user);
     }
 
     public void delete(Category category){

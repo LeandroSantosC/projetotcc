@@ -27,7 +27,7 @@ body::-webkit-scrollbar-thumb {
 body, header{
     display: flex;
     position: relative;
-    width: 100%;
+    width: 100vw;
     border:transparent;
     overflow: hidden;
     align-items: center;
@@ -47,16 +47,16 @@ body{
 header{
     flex-direction: row;
     position: sticky;
-    padding: 1.5vw;
+    padding: 1.5%;
     top:0;
-    height: 15vw;
+    height: 7vh;
     background-color: cornflowerblue;
 }
 
-.btn, .buttons{
+.btn, .buttons, .button-edit, #add-button{
     display: flex;
     position: relative;
-    width: 13vw;
+    width: 6.5vh;
     border: transparent;
     overflow: hidden;
     align-items: center;
@@ -64,36 +64,75 @@ header{
     flex-shrink: 1;
     border-width: 0;
     
-    font-size: 7vw;
+    font-size: 4vh;
     height: auto;
     aspect-ratio: 1/1;
     flex-wrap: nowrap;
-    border-radius: 7vw;
-    margin: 1.5vw;
+    border-radius: 3.5vh;
+    margin: 0.5vh 0.5vw;
     cursor: pointer;
-    box-shadow: 0px 1px 3px 0px;
+    box-shadow: 0px 2px 5px 0px;
     transition: filter 0.3s ease;
 }
 
-.buttons{
+.buttons, .button-edit, #add-button{
     display: flex;
-    flex: 0 1 calc(33.33% - 2vw); /* 3 itens por linha */
-    margin: 1vw;
+    flex: 0 1 clamp(80px, calc(33.3% - 2vh), 130px);
+    margin: clamp(5px, 1vh, 10px);
+    border-radius: 20px;
     aspect-ratio: 1 / 1.25;
     flex-direction: column;
     justify-content: flex-start;
+    background-color: #f0f0f0;
+}
+
+#add-button{
+    display: none;
+    border: 0.5vh outset cornflowerblue;
+}
+
+#add-button img{
+    padding: 40%;
+}
+
+.card-options{
+    display: none;
+    width: 100%;
+    position: absolute;
+    flex-direction: row;
+}
+
+.btn-content{
+    display: flex;
+    position: relative;
+    height: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f0f0;
+    transition: filter 0.3s ease;
+}
+
+.del-card-btn, .show-card-btn, .edit-card-btn{
+    display: block;
+    color: rgba(0, 0, 0, 0.651);
+    background-color: rgb(240, 240, 240);
+    margin: 1%;
+    text-align: center;
+    align-content: center;
+    font-size: 120%;
 }
 
 .card-button{
     width: auto;
-    height: 98%;
+    height: 100%;
     flex: 0 0 auto;
     margin: 0;
     aspect-ratio: 1 / 1.25;
 }
 
-.buttons span{
-    font-size: clamp(5px, 3.5vw, 30px);
+.btn-content span, .card-button span{
+    font-size: clamp(5px, 2vh, 30px);
     font-weight: 600;
     overflow: visible;
     flex-wrap: wrap;
@@ -101,7 +140,7 @@ header{
     flex-shrink: 1;
 }
 
-.buttons div:last-child{
+.btn-content div:last-child, .card-button div:last-child{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -109,7 +148,7 @@ header{
 }
 
 
-.buttons img{
+.btn-content img, .card-button img{
     flex-shrink: 0;
     width: 100%;
     aspect-ratio: 1/1;
@@ -117,8 +156,9 @@ header{
 }
 
 #menu-button, #login-button{
+    margin: 0;
     width: auto;
-    height: calc(100% - 3vw);
+    height: 100%;
     aspect-ratio: 1;
     position: absolute;
     background-color: cornflowerblue;
@@ -127,26 +167,28 @@ header{
 }
 
 #menu-button{
-    left: 0px;
-    top: 0px;
+    left: 0.5vw;
+    top: 0.2vh;
 }
 
 #login-button{
-    right: 0px;
-    top: 0px;
+    right: 0.5vw;
+    top: 0.2vh;
 }
 
 /* BOARD */
 #board{
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-around;
     flex-direction: row;
     position: sticky;
-    padding: 1.5vw 0;
-    flex: 1, 0;
-    width: 100%;
-    height: 40vw;
+    padding: 1vh 0.5vh;
+    flex: 0;
+    flex-shrink: 0;
+    width: 100vw;
+    height: 20vh;
+    /* height: 40vw; */
     background-color: cornflowerblue;
 }
 
@@ -156,8 +198,11 @@ header{
     flex-direction: row;
     justify-content: flex-start;
     overflow-x: auto;
-    height: 100%;
-    gap: 5px;
+    height: 98%;
+    width: 100%;
+    gap: 1vw;
+    flex-grow: 1;
+    flex-shrink: 1;
     scrollbar-width: none;
 }
 
@@ -169,7 +214,7 @@ header{
     display: flex;
     flex-direction: column;
     position: relative;
-    gap: 9vw;
+    gap: 4vh;
 }
 
 /* FIM BOARD */
@@ -187,22 +232,23 @@ header{
     justify-content: center;
     align-items: center;
     flex-direction: row;
-    width: 100%;
-    height: 10vw;
-    justify-content: space-around;
-    margin: 1.5vw 0;
+    width: 100vw;
+    height: 7vh;
+    background-color: transparent;
+    justify-content: space-between;
+    padding: 0.5vh 1vw;
+    flex: 0;
 }
 
 .button-content{
     position: relative;
     display: flex;
     flex-direction: row;
-    justify-content: flex-start; /* Itens alinhados à esquerda */
+    justify-content: space-evenly; /* Itens alinhados à esquerda */
     flex-wrap: wrap; /* Permite que os itens quebrem para a próxima linha */
     overflow-y: auto;
     height: auto;
-    width: 100%;
-    padding: 1.5vw;
+    width: 100vw;
     flex-shrink: 1;
     scrollbar-width: none;
 }
@@ -215,8 +261,8 @@ header{
     flex-wrap: nowrap; /* Permite que os itens quebrem para a próxima linha */
     overflow-y: auto;
     height: auto;
-    width: 100%;
-    padding: 1.5vw;
+    width: 100vw;
+    padding: 1vw;
     flex-shrink: 1;
     scrollbar-width: none;
 }
@@ -234,6 +280,7 @@ header{
     border: transparent;
     box-shadow: 0px 1px 3px 0px;
 }
+
 .boards div{
     display: flex;
     flex-direction: row;
@@ -270,15 +317,15 @@ header{
     display: none;
 }
 
-#category-selector, #search-bar, #search-bar input{
+.category-selector, #search-bar, #search-bar input{
     display: flex;
     position: relative;
     height: 100%;
-    width: 35%;
-    margin: 3px;
+    width: 50vh;
+    margin: 0.3vh;
     border-radius: 30px;
     text-align: center;
-    font-size: clamp(5px, 3vw, 30px);
+    font-size: 2.5vh;
     font-weight: 600;
     flex-grow: 0;
     flex-shrink: 1;
@@ -293,10 +340,10 @@ header{
     position: relative;
     align-items: center;
     justify-content: center;
-    padding: 1.5vw;
+    padding: 1vh;
     border: transparent;
     border-radius: 30px;
-    font-size: 3.5vw;
+    font-size: 2.5vh;
     height: 100%;
     width: auto;
     flex-grow: 1;
@@ -307,6 +354,7 @@ header{
 }
 
 #del-search{
+    display: none;
     right: 1vw;
 }
 
@@ -315,7 +363,7 @@ header{
     position: relative;
     height: 100%;
     width: 100%;
-    padding-left: 10px;
+    padding-left: 1vw;
     text-align: start;
     background-color: transparent;
     border: transparent;
@@ -328,9 +376,8 @@ header{
     justify-content: space-evenly;
     align-items: center;
     width: 100%;
-    height: 8vw;
-    margin-top: 1vw;
-    padding: 2vw;
+    height: 3vh;
+    margin: 1vh;
 }
 
 .switch-tab input{
@@ -338,7 +385,7 @@ header{
 }
 
 .switch-tab div{
-    font-size: 6vw;
+    font-size: 3vh;
     transition: 0.3s;
     cursor: pointer;
 }
@@ -365,7 +412,7 @@ header{
 }
 
 .switch-tab input:checked + div{
-    font-size: 9vw;
+    font-size: 5vh;
     color: #2196F3;
     text-decoration: underline #2196F3 2px;
     position: relative;
@@ -393,7 +440,7 @@ header{
     display: block;
     text-align: center;
     align-content: center;
-    font-size: 3.5vw;
+    font-size: 2.5vh;
     position: relative;
     cursor: pointer;
     height: 100%;
@@ -514,51 +561,14 @@ header{
 #form-button-edit{
     display: flex;
     position: relative;
+    top: -5vh;
     flex-direction: column;
-    flex-grow: 1;
-    justify-content: space-between;
-    height: 80%;
-    width: 100%;
-}
-
-#form-button-edit > label{
-    font-size: clamp(20px, 6vw, 30px);
-    position: relative;
-    width: 100%;
-    flex-direction: column;
-    align-items: center;
-    display: flex;
     flex-grow: 0;
     justify-content: center;
-
-}
-
-#form-button-edit div{
-    display: flex;
-    position: relative;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: space-around;
-    width: 100%;
-    flex-basis: clamp(40px, 50px, 60px);
-    flex-shrink: 1;
-    overflow: hidden;
-    justify-self: flex-start;
-    margin-bottom: clamp(0px, 5px, 10px);
-    background-color: #f0f0f0;
-    border-radius: 30px;
-}
-
-#form-button-edit input, select, img{
-    outline: none;
-    display: flex;
-    position: relative;
-    flex-grow: 1;
-    font-size: 2em;
-    overflow: hidden;
-    margin: 0px 10px;
-    background-color: #f0f0f0;
-    border: #f0f0f0;
+    height: 100vh;
+    background-color: #2196F3;
+    width: 40vh;
+    gap: 1.5vh;
 }
 
 .button-file{
@@ -577,17 +587,8 @@ header{
     font-size: clamp(10px, 6vw, 30px);
 }
 
-#form-button-edit button{
-    width: 20vw;
-    border-radius: 30px;
-    background-color: black;
-    color: white;
-    border: transparent;
-    font-size: 25px;
-}
-
-.buttons:hover, .btn:hover, .card-button:hover{
-    filter: brightness(1.2); /* Aumenta o brilho, tornando a cor mais clara */
+.btn-content:hover, .btn:hover, .card-button:hover{
+    filter: brightness(1.05); /* Aumenta o brilho, tornando a cor mais clara */
 }
 
 /* Ripple Effect (ondulação) */
@@ -610,7 +611,99 @@ header{
     transform: scale(0); /* Começa pequeno */
     pointer-events: none; /* Não interferir em outros eventos de clique */
     opacity: 0.7;
-  }
+}
+
+.button-edit{
+    display: flex;
+    width: 100%;
+    aspect-ratio: 1/1.25;
+    flex-shrink: 0;
+    margin: 0;
+    font-size: 4vh;
+}
+
+#category-edit{
+    height: 5vh;
+    width: 100%;
+    margin: 0;
+}
+
+#sound-edit{
+    display: flex;
+    position: relative;
+    height: 7vh;
+    width: 100%;
+    background-color: #f0f0f0;
+    border-radius: 35px;
+    justify-content: center;
+    align-items: center;
+}
+
+#record-sound-btn, #select-sound-btn{
+    position: absolute;
+    margin: 0;
+    height: 120%;
+    border-radius: 50%;
+    width: auto;
+}
+
+#save-btn, #discard-btn{
+ position: absolute;
+}
+
+#record-sound-btn, #discard-btn{
+    left: 0;
+}
+
+#select-sound-btn, #save-btn{
+    right: 0;
+}
+
+.invisible{
+    background-color: rgba(240,240,240,0.3);
+    border: 0.5vh outset rgba(100,149,237,0.3);
+}
+
+.invisible div:first-child{
+    opacity: 0.3;
+}
+
+.invisible .show-card-btn{
+    background-color: #2196F3;
+}
+
+.dragging{
+    opacity: 0;
+}
+
+.buttons.moveright{
+    animation: moveright 0.5s ease forwards;
+}
+
+.buttons.moveleft{
+    animation: moveleft 0.5s ease forwards;
+}
+
+@keyframes moveleft{
+    0%{
+        transform: translateX(-160px);
+    }
+    
+    100%{
+        transform: translateX(0px);
+    }
+}
+
+@keyframes moveright{
+    0%{
+        transform: translateX(160px);
+    }
+    
+    100%{
+        transform: translateX(0px);
+    }
+}
+
 
 @keyframes ripple-effect {
     to {

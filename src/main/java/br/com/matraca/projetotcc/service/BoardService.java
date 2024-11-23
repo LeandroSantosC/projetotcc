@@ -42,10 +42,6 @@ public class BoardService {
         repository.save(board);
     }
 
-    public Iterable<Button> getAllButtons(Board board){
-        return button.getAllByBoard(board);
-    }
-
     public void delete(Board board){
         repository.delete(board);
     }
