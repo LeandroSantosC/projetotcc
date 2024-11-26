@@ -17,6 +17,11 @@ const add_button = document.getElementById("add-button")
 const card_options = document.getElementsByClassName("card-options")
 const content = document.getElementById('content')
 const form_button_edit = document.getElementById('form-button-edit');
+const buttons = main_buttons.querySelectorAll(".buttons"); // Ajuste o seletor para os seus botões/cards
+const searchInput = document.querySelector("#search-bar input");
+let searchValue = "";
+let categorySelected = "";
+let isEditOn = false;
 let initialData;
 let board = []
 
@@ -49,6 +54,28 @@ document.addEventListener('DOMContentLoaded', function() {
     sortDivsByOrder();
 });
 
+function searchButtons() {
+    buttons.forEach(button => {
+        // Verifica se o botão corresponde ao valor de busca
+        const matchesSearch = button.querySelector('span:first-child').textContent?.includes(searchValue);
+
+        // Verifica se o botão pertence à categoria selecionada
+        const matchesCategory = button.dataset.category?.includes(categorySelected);
+
+        // Verifica se o botão está invisível
+        const isVisible = !button.classList.contains('invisible');
+
+        console.log(button.name + ": " + matchesSearch, matchesCategory, isVisible);
+        // Aplica a lógica final
+        if (matchesSearch && matchesCategory && (isEditOn || isVisible)) {
+            button.style.display = "flex"; // Exibe o botão
+        } else {
+            button.style.display = "none"; // Oculta o botão
+        }
+    });
+}
+
+
 function sortDivsByOrder() {
     const boxes = Array.from(main_buttons.children); // Seleciona todas as divs dentro do container
     
@@ -61,50 +88,70 @@ function sortDivsByOrder() {
     boxes.forEach(box => main_buttons.appendChild(box)); // Reinsere as divs ordenadas no container
 }
 
-//Pega os cliques no container de botoes
-main_buttons.addEventListener("click", function(event){
-    //Devolve o clique só quando clicar em um objeto da classe "buttons", caso contrário retorna null
-    let buttonClick = event.target.closest(".btn-content");
-    if(buttonClick){
-        //Cria um novo "ditador" e pede para ele ditar o conteudo do botão clicado
-        let ut = new SpeechSynthesisUtterance(buttonClick.textContent);
-        //se ele estiver ja estiver ditando e clicar em outro botão, então cancela.
-        if(window.speechSynthesis.speaking){
-            window.speechSynthesis.cancel();
-        }
-        window.speechSynthesis.speak(ut);
-        addButtonToBoard(buttonClick);
+main_buttons.addEventListener("click", function(event) {
+    // Processar clique em botão de conteúdo
+    let buttonClicked = event.target.closest(".btn-content");
+    if (buttonClicked) {
+        handleButtonClick(buttonClicked);
     }
 
-    let show_card_btn = event.target.closest(".show-card-btn")
-
-    if(show_card_btn){
-        let input = show_card_btn.querySelector("input[type='checkbox']");
-
-        if(input && input.checked){
-            show_card_btn.parentElement.parentElement.classList.remove('invisible');
-            show_card_btn.parentElement.parentElement.style.border = "0.5vh outset cornflowerblue";
-        }
-        else{
-            show_card_btn.parentElement.parentElement.classList.add('invisible');
-            show_card_btn.parentElement.parentElement.style.border = "";
-        }
-        attOrder();
+    // Processar clique em botão de mostrar/ocultar cartão
+    let show_card_btn = event.target.closest(".show-card-btn");
+    if (show_card_btn) {
+        toggleCardVisibility(show_card_btn);
     }
 
+    // Processar clique em botão de deletar cartão
     let del_card_btn = event.target.closest(".del-card-btn");
+    if (del_card_btn) {
+        handleDeleteCard(del_card_btn);
+    }
+});
 
-    if(del_card_btn){
-        let button = del_card_btn.parentElement.parentElement.id;
-        deletar(button);
+function handleButtonClick(buttonClicked) {
+    let ut = new SpeechSynthesisUtterance(buttonClicked.textContent);
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+    }
+    window.speechSynthesis.speak(ut);
+    addButtonToBoard(buttonClicked);
+}
+
+function toggleCardVisibility(show_card_btn) {
+    let button = show_card_btn.parentElement.parentElement;
+    let icon = show_card_btn.querySelector('span');
+    let input = show_card_btn.querySelector("input[type='checkbox']");
+
+    if (input && input.checked) {
+        button.classList.remove('invisible');
+        icon.classList.add('fa-eye');
+        icon.classList.remove('fa-eye-slash');
+    } else {
+        button.classList.add('invisible');
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
     }
 
-})
+    attOrder();
+}
+
+function handleDeleteCard(del_card_btn) {
+    let button = del_card_btn.parentElement.parentElement.id;
+    deletar(button);
+}
+
+
 
 const input_img = document.getElementById("input-btn-image")
 
 input_img.addEventListener("click", () => {
     input_img.classList.toggle('active')
+})
+
+const input_sound = document.getElementById("select-sound-btn")
+
+input_sound.addEventListener("click", () => {
+    input_sound.classList.toggle('active')
 })
 
 const add_category = document.getElementById("add-category");
@@ -240,27 +287,8 @@ main_boards.addEventListener("click", function(event){
 
 category_selector.addEventListener("change", function(event) {
     // Verifica se o valor selecionado é 'tudo'
-    if (category_selector.value === "tudo") {
-        // Seleciona todos os botões e exibe-os
-        let buttons = main_buttons.querySelectorAll(".buttons");
-        buttons.forEach(button => {
-            button.style.display = "flex"; // Exibe todos os botões
-        });
-    } else {
-        // Seleciona todos os botões e oculta os que não pertencem à categoria selecionada
-        let buttons = main_buttons.querySelectorAll(".buttons");
-
-        buttons.forEach(button => {
-            console.log(event.target.value)
-            console.log(button)
-            // Se o botão tem a categoria selecionada, exibe-o, caso contrário oculta
-            if (button.dataset.category.contains(event.target.value)) {
-                button.style.display = "flex"; // Exibe o botão da categoria
-            } else {
-                button.style.display = "none"; // Oculta o botão fora da categoria
-            }
-        });
-    }
+    categorySelected = event.target.value;
+    searchButtons();
 });
 
 tab_button.addEventListener("click", function(){
@@ -369,32 +397,27 @@ rippleButtons.forEach(rippleButton => {
 
 edit_switch.addEventListener('change', (event) => {
 
-    if (event.target.checked){
-        let invisibles = content.querySelectorAll('.invisible')
-        invisibles.forEach(element => {
-            element.style.display = "flex"
-        })
+    isEditOn = event.target.checked;
 
+    if (event.target.checked){
         add_button.style.display = "flex";
         Array.from(card_options).forEach(element => {
             element.style.display = "flex";
-            element.parentElement.style.border = "0.5vh outset cornflowerblue"
+            element.parentElement.classList.add('editable');
             element.parentElement.setAttribute('draggable', true);
         })
     }
     else{
-        let invisibles = content.querySelectorAll('.invisible')
-        invisibles.forEach(element => {
-            element.style.display = "none"
-        })
-
         add_button.style.display = "none";
+
         Array.from(card_options).forEach(element => {
             element.style.display = "none";
-            element.parentElement.style.border = ""
+            element.parentElement.classList.remove('editable');
             element.parentElement.setAttribute('draggable', false);
         })
     }
+
+    searchButtons();
 })
 
 main_buttons.addEventListener('dragstart', (e) => {
@@ -625,41 +648,24 @@ function excluirItem(id) {
 
 //------------------------------- SEARCH BAR --------------------------------
 
-// Selecionando elementos da search-bar
-const searchInput = document.querySelector("#search-bar input");
 
 // Selecionando os itens que serão filtrados
-const items = document.querySelectorAll(".buttons"); // Ajuste o seletor para os seus botões/cards
 const del_search = document.getElementById("del-search");
 
 // Lógica de busca em tempo real
 searchInput.addEventListener("input", () => {
-  const searchValue = searchInput.value.toLowerCase().trim();
-  if(searchInput.value != ""){
-    del_search.style.display = "flex";
-  }
-  else{
-    del_search.style.display = "none";
-  }
+    searchValue = searchInput.value;
+    del_search.style.display = searchInput.value != "" ? "flex" : "none"
 
-  items.forEach((item) => {
-    const itemText = item.textContent.toLowerCase();
-
-    if (itemText.includes(searchValue)) {
-      item.style.display = ""; // Mostra o item
-    } else {
-      item.style.display = "none"; // Esconde o item
-    }
-  });
+    searchButtons();
 });
 
 del_search.addEventListener("click", () => {
+    searchValue = "";
     searchInput.value = "";
     del_search.style.display = "none";
 
-    items.forEach((item) => {
-        item.style.display = ""; // Mostra todos os itens novamente
-    });
+    searchButtons();
 })
 
 //---------------------------- BUTTON OPTIONS ----------------------------------

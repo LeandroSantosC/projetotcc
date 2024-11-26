@@ -31,10 +31,10 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
     <!-- AREA DOS BOTOES -->
     <div class="tools-tab">
         <select name="categoria" class="category-selector" id="category-selector">
-            <option value="tudo">Tudo</option>
+            <option value="">Tudo</option>
             <option 
             th:each="category : ${categories}" 
-            th:value="'btn-category-' + ${category.id}" 
+            th:value="${category.id}" 
             th:text="${category.name}"></option>
         </select>
         <div id="search-bar">
@@ -58,14 +58,15 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
     <div id="content">
         <div id="main-buttons" class="button-content">
-            <div type="button" class="btn rippleBtn" id="add-button">
+            <div type="button" class="rippleBtn" id="add-button">
                     <img src="https://cdn-icons-png.flaticon.com/512/1264/1264564.png"
                     alt="+">
             </div>
-            <div th:class="'buttons btn-category-' + ${button.category.id} + (${button.isVisible} ? '' : ' invisible')"
+            <div th:class="'buttons '+ (${button.isVisible} ? '' : ' invisible')"
                 th:each="button : ${buttons}" 
                 th:id="${button.id}"
                 th:styleappend="'order:' + ${button.position} + '; '"
+                th:data-category="${button.category.id}"
                 >
                 <div class="btn-content rippleBtn">
                     <img th:src="${button.image}"
@@ -75,12 +76,12 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
                     </div>
                 </div>
                 <div class="card-options">
-                    <button type="button" class="btn edit-card-btn fa-solid fa-pen-to-square"></button>
+                    <button type="button" th:onclick="'editButton(' + ${button.id} + ')'" class="btn edit-card-btn fa-solid fa-pen-to-square"></button>
                     <label class="btn show-card-btn">
                         <input type="checkbox" style="opacity: 0; position: absolute; cursor: pointer;" th:checked="${button.visible}">
                         <span class="fa-solid fa-eye"></span>
                     </label>
-                    <button type="button" th:onclick="deletar(${button.id})" class="btn del-card-btn fa-solid fa-trash"></button>
+                    <button type="button" th:onclick="'deletar('+ ${button.id} + ')'" class="btn del-card-btn fa-solid fa-trash"></button>
                 </div>
             </div>
         </div>
@@ -117,34 +118,53 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
         </div>
     </div>
 
-    <div class="background-window" style="display: none;">
-        <div id="form-button-edit">
+    <div class="background-window">
+        <form id="form-button-edit" action="" method="post">
             <div class="button-edit">
-                <div class="btn-content rippleBtn">
-                    <img th:src="button.image"
-                    th:alt="button.name" draggable="false">
+                <div class="btn-content">
+                    <div style="display: flex; position: absolute; top: 2%; right: 2%; width: 6.5vh;">
+                        <button type="button" class="btn animated-btn fa-solid fa-paperclip" id="input-btn-image"></button>
+                        <button type="button" class="btn fa-solid fa-globe" style="background-color:lightgreen;"></button>
+                        <button type="button" class="btn fa-solid fa-folder" style="background-color:tomato;"></button>
+                    </div>
+                    <img src=""
+                    alt="Digite um nome para gerar a imagem ou clique para adicionar" draggable="false">
                     <div>
-                        <input th:value="button.name"></input>
+                        <input id="input-btn-id" type="hidden" th:value="button.id"></input>
+                        <input id="input-btn-name" type="text" th:value="button.name" required></input>
                     </div>
                 </div>
             </div>
-            <select name="categoria" class="category-selector" id="category-edit">
-                <option>ALGUM</option>
-                <option
-                th:each="category : ${categories}"
-                th:value="'btn-category-' + ${category.id}" 
-                th:text="${category.name}"></option>
-            </select>
+            <div style="width: 100%; height: 6vh; position: relative;">
+                <div style="width: 100%; height: 6vh; position: relative;">
+                    <button type="button" class="btn fa-solid fa-add" id="add-category"></button>
+                    <select name="categoria" class="category-selector" id="category-edit">
+                        <option
+                        th:each="category : ${categories}"
+                        th:value="${category.id}" 
+                        th:text="${category.name}"></option>
+                    </select>
+                </div>
+                <div class="category-selector" id="input-category" style="display: none;">
+                    <button type="button" class="btn fa-solid fa-close" id="del-category"></button>
+                    <input>
+                    <button type="button" class="btn fa-solid fa-check" id="confirm-category"></button>
+                </div>
+            </div>
             <div id="sound-edit">
-                <button class="fa-solid fa-microphone btn" id="record-sound-btn"></button>
-                <span>Grave ou Selecione</span>
-                <button class="fa-solid fa-paperclip btn" id="select-sound-btn"></button>
+                <button type="button" class="fa-solid fa-microphone btn" id="record-sound-btn"></button>
+                <span style="font-size: 2vh;">Grave ou Selecione</span>
+                <div aria-hidden="false" class="btn" style="margin: 0; height: 120%; width: auto; border-radius: 50%; position: absolute; right: 0; aspect-ratio: 1/1;">
+                    <button type="button" aria-hidden="false" id="select-sound-btn" class="btn animated-btn fa-solid fa-paperclip"></button>
+                    <button type="button" aria-hidden="false" class="btn fa-solid fa-globe" style="background-color:lightgreen;"></button>
+                    <button type="button" aria-hidden="false" class="btn fa-solid fa-folder" style="background-color:tomato;"></button>
+                </div>
             </div>
             <div style="display: flex;">
-                <button class="btn fa-solid fa-close" id="discard-btn"></button>
-                <button class="btn fa-solid fa-save" id="save-btn"></button>
+                <button type="button" class="btn fa-solid fa-close" id="discard-btn" onclick="fecharForm()"></button>
+                <button type="submit" class="btn fa-solid fa-save" id="save-btn"></button>
             </div>
-        </div>
+        </form>
     </div>
 
     <!-- <div id="button-container" class="background-window" style="display: none;">
