@@ -16,7 +16,8 @@ const edit_switch = document.getElementById("edit-switch")
 const add_button = document.getElementById("add-button")
 const card_options = document.getElementsByClassName("card-options")
 const content = document.getElementById('content')
-
+const form_button_edit = document.getElementById('form-button-edit');
+let initialData;
 let board = []
 
 // window.speechSynthesis.addEventListener("voiceschanged", () => {
@@ -25,34 +26,18 @@ let board = []
 //     optionEl.setAttribute("value", i)
 //     optionEl.innerText = voicesList[i].name;
 // })
+const input = document.getElementById('input-btn-name');
+const errorMessage = document.getElementById('error-message');
 
-console.log("test test");
-
-
-// function loadHTML(elementId, fileName) {
-//     fetch(fileName)
-//         .then(response => {
-//             if (!response.ok) {
-//                 throw new Error('Erro ao carregar o arquivo');
-//             }
-//             return response.text();
-//         })
-//         .then(data => {
-//             document.getElementById(elementId).innerHTML = data;
-            
-//         })
-//         .catch(error => {
-//             console.error('Erro:', error);
-//         });
-// }
-
-// // Quando o documento carregar, injetar os arquivos HTML
-// window.onload = function() {
-//     loadHTML('header', 'header.html');
-//     loadHTML('board', 'board.html')
-//     loadHTML('content', 'button-content.html');
-//     loadHTML('menu', 'menu.html');
-// }
+input.addEventListener('input', () => {
+    // Remove caracteres especiais em tempo real
+    if(/[A-ZÀ-ÚÇ]*$/.test(input.value)){
+        input.value = input.value.toLowerCase();
+        if (/[a-zà-ú-ç!?\s]*$/.test(input.value)) {
+            input.value = input.value.replace(/[^a-zà-ú-ç!?\s]/g, ''); // Remove caracteres inválidos
+        }
+    }
+});
 
 document.addEventListener('DOMContentLoaded', function() {
     // Código a ser executado quando a página for carregada
@@ -97,27 +82,124 @@ main_buttons.addEventListener("click", function(event){
         let input = show_card_btn.querySelector("input[type='checkbox']");
 
         if(input && input.checked){
-            show_card_btn.parentElement.parentElement.classList.remove('invisible')
+            show_card_btn.parentElement.parentElement.classList.remove('invisible');
             show_card_btn.parentElement.parentElement.style.border = "0.5vh outset cornflowerblue";
         }
         else{
-            show_card_btn.parentElement.parentElement.classList.add('invisible')
+            show_card_btn.parentElement.parentElement.classList.add('invisible');
             show_card_btn.parentElement.parentElement.style.border = "";
         }
         attOrder();
     }
 
-    let del_card_btn = event.target.closest(".del-card-btn")
+    let del_card_btn = event.target.closest(".del-card-btn");
 
     if(del_card_btn){
         let button = del_card_btn.parentElement.parentElement.id;
         deletar(button);
     }
 
-
-
-
 })
+
+const input_img = document.getElementById("input-btn-image")
+
+input_img.addEventListener("click", () => {
+    input_img.classList.toggle('active')
+})
+
+const add_category = document.getElementById("add-category");
+
+add_category.addEventListener("click", () =>{
+    add_category.classList.toggle("active");
+    input_category.style.display = "";
+    add_category.parentElement.style.display = "none";
+})
+
+const input_category = document.getElementById("input-category");
+
+input_category.addEventListener("click", (event) => {
+    if(event.target.closest("#del-category")){
+        input_category.style.display = "none"
+        add_category.parentElement.style.display = "";
+    }
+    
+    const input = input_category.querySelector("input");
+    
+    console.log(input.value.length)
+
+    if(event.target.closest("#confirm-category") && input.value.length > 0){
+        const category_edit = document.getElementById("category-edit");
+        const options = category_edit.querySelectorAll("option");
+        let isNewOption = true;
+
+        options.forEach(option => {
+            if(option.textContent === input.value){
+                option.selected = true;
+                isNewOption = false;
+                console.log(option)
+                console.log(isNewOption)
+            }
+        })
+
+        if(isNewOption){
+            category_edit.add(new Option(input.value, null, false, true));
+        }
+
+        input_category.style.display = "none"
+        add_category.parentElement.style.display = "";
+    }
+})
+
+function editButton(buttonId){
+    let button = document.getElementById(buttonId);
+    initialData = new FormData();
+    let id = button.id;
+    let name = button.querySelector('span').textContent;
+    let img = button.querySelector('img').src;
+    let category = button.dataset.category;
+
+    initialData.append('id', id)
+    initialData.append('name', name);
+    initialData.append('img', img);
+    initialData.append('category', category)
+    currentData = initialData;
+
+    form_button_edit.querySelector('img').src = initialData.get('img');
+    form_button_edit.querySelector('#input-btn-id').value = initialData.get('id');
+    form_button_edit.querySelector('#input-btn-name').value = initialData.get('name');
+    form_button_edit.querySelector('#category-edit').value = initialData.get('category');
+    form_button_edit.parentElement.style.display = "flex";
+}
+
+// Detectar mudanças no formulário
+form_button_edit.addEventListener("change", () => {
+    currentData = new FormData(form_button_edit);
+});
+
+// Comparar dois objetos FormData
+function areFormsEqual(data1, data2) {
+    if (data1.entries().length !== data2.entries().length) return false;
+    for (let [key, value] of data1.entries()) {
+        if (data2.get(key) !== value) return false;
+    }
+    return true;
+}
+
+
+function fecharForm(){
+    if (!areFormsEqual(initialData, currentData)) {
+        event.preventDefault();
+         // Requerido para exibir o alerta
+        if(confirm("Deseja descartar as alterações?")){
+            form_button_edit.parentElement.style.display = "";
+            currentData = "";
+        }
+    }
+    else{
+        form_button_edit.parentElement.style.display = "";
+    }
+}
+
 
 // Dados a serem enviados para o 
 function atualizarDados(botao, posicao, visivel){
@@ -172,7 +254,7 @@ category_selector.addEventListener("change", function(event) {
             console.log(event.target.value)
             console.log(button)
             // Se o botão tem a categoria selecionada, exibe-o, caso contrário oculta
-            if (button.classList.contains(event.target.value)) {
+            if (button.dataset.category.contains(event.target.value)) {
                 button.style.display = "flex"; // Exibe o botão da categoria
             } else {
                 button.style.display = "none"; // Oculta o botão fora da categoria
@@ -221,8 +303,7 @@ play_button.addEventListener("click", function(){
     let phrase = [];
     for(let card of board_cards.children){
         let word = card.querySelector("span")
-        phrase += word.textContent + " ";
-        console.log(phrase)
+        phrase.push(word.textContent);
     }
     if(window.speechSynthesis.speaking){
         window.speechSynthesis.cancel();
@@ -399,8 +480,16 @@ function sendChangesOnLogout() {
 }
 
 window.onbeforeunload = function(event) {
+    fecharForm();
     sendChangesOnLogout();
 };
+
+window.addEventListener("beforeunload", (event) => {
+    if (isFormDirty) {
+        event.preventDefault();
+        event.returnValue = "Você tem mudanças não salvas. Deseja sair?";
+    }
+});
 
 function ordenar(event) {
     event.preventDefault();
