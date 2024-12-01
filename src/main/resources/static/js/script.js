@@ -216,7 +216,7 @@ generate_image.addEventListener("click", () => {
 })
 
 function scrap(buttonName){
-    fetch('/button/scrap', {
+    fetch('/scrap', {
         method: 'POST', // Método HTTP
         headers: {
           'Content-Type': 'text/plain' // Indicando que os dados são no formato JSON
@@ -376,7 +376,7 @@ async function saveButton(buttonForm){
     console.log(formData);
 
     try {
-        const response = await fetch(`/button/${formData.id}`, {
+        const response = await fetch(`/${formData.id}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData),
@@ -621,7 +621,7 @@ function sendChangesOnLogout() {
 
     return new Promise((resolve, reject) => {
         if (cachedChanges.length > 0) {
-            fetch('/button/update-layout', {
+            fetch('/update-layout', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -749,7 +749,7 @@ function deletar(id) {
 }
 
 function excluirItem(id) {
-    fetch(`/button/${id}`, {
+    fetch(`/${id}`, {
         method: 'DELETE',
     })
     // .then(response => {

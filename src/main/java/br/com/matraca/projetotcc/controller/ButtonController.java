@@ -30,7 +30,7 @@ import br.com.matraca.projetotcc.service.Scraping;
 
 
 @RestController
-@RequestMapping("button")
+@RequestMapping("/")
 public class ButtonController {
 
     @Autowired //essa anotação serve para indicar para o spring que quando ele for instaciar o controller ele deve injetar essa dependencia 
