@@ -23,6 +23,7 @@ let searchValue = "";
 let categorySelected = "";
 let isEditOn = false;
 let initialData;
+let currentData;
 let board = []
 
 // window.speechSynthesis.addEventListener("voiceschanged", () => {
@@ -142,86 +143,197 @@ function handleDeleteCard(del_card_btn) {
 
 
 
-const input_img = document.getElementById("input-btn-image")
+const btn_img = document.getElementById("btn-img");
+const url_img = document.getElementById("btn-url-img");
+const input_img = document.getElementById("input-btn-img");
+const input_img_url = document.getElementById("input-url-img");
+const confirm_img_input = document.getElementById("confirm-img-input");
+const del_img_input = document.getElementById("del-img-input");
 
-input_img.addEventListener("click", () => {
-    input_img.classList.toggle('active')
+del_img_input.addEventListener("click", () => {
+    input_img_url.classList.add("disabled");
+    input_img_url.querySelector("input").value = "";
 })
 
-const input_sound = document.getElementById("select-sound-btn")
+const img_url = document.getElementById('imageUrl');
 
-input_sound.addEventListener("click", () => {
-    input_sound.classList.toggle('active')
+confirm_img_input.addEventListener("click", () => {
+    const input = input_img_url.querySelector("input");
+    const img = form_button_edit.querySelector('img');
+    
+
+    checkIfImage(input.value).then( isImage => {
+        if(isImage){
+            img.src = input.value;
+            img_url.value = input.value;
+            input.value = "";
+            input_img_url.classList.add("disabled");
+            attCurrentData();
+        }
+    })
+})
+
+function checkIfImage(url) {
+    return fetch(url)
+        .then(response => {
+            // Verifica se o status da resposta é 2xx (sucesso) e se o tipo de conteúdo é uma imagem
+            const contentType = response.headers.get('Content-Type');
+            if (contentType && contentType.startsWith('image/')) {
+                return true;
+            } else {
+                return false;
+            }
+        })
+        .catch(error => {
+            console.error("Erro ao verificar a URL:", error);
+            return false;  // Em caso de erro, como a URL não ser acessível, retorna falso
+        });
+}
+
+url_img.addEventListener("click", () => {
+    input_img_url.classList.toggle("disabled");
+})
+
+btn_img.addEventListener("click", () => {
+    input_img.click();
+})
+
+input_img.addEventListener("change", (event) => {
+    const file = event.target.files[0];
+
+    if(file && file.type.startsWith('image/')){
+        const imageURL = URL.createObjectURL(file); // Gera uma URL local temporária
+        form_button_edit.querySelector('img').src = imageURL; // Define o src da imagem com a URL gerada
+    }
+})
+
+const generate_image = document.getElementById("generate-img");
+const input_btn_name = document.getElementById("input-btn-name");
+
+generate_image.addEventListener("click", () => {
+    form_button_edit.querySelector('img').src = "https://cdn.pixabay.com/animation/2023/08/11/21/18/21-18-05-265_512.gif";
+    scrap(input_btn_name.value);
+})
+
+function scrap(buttonName){
+    fetch('/button/scrap', {
+        method: 'POST', // Método HTTP
+        headers: {
+          'Content-Type': 'text/plain' // Indicando que os dados são no formato JSON
+        },
+        body: buttonName // Convertendo o objeto para uma string JSON
+      })
+      .then(response => response.text())
+      .then(data => {
+        form_button_edit.querySelector('img').src = data;
+        img_url.value = data;
+        attCurrentData();
+      })
+      .catch((error) => {
+        console.error("Error:", error); // Manipule qualquer erro
+      });
+}
+
+
+
+
+const animated_btns = document.getElementsByClassName("animated-btn")
+
+Array.from(animated_btns).forEach(animated_btn =>{
+    animated_btn.addEventListener("click", () => {
+        animated_btn.classList.toggle('active')
+    })
 })
 
 const add_category = document.getElementById("add-category");
+const category_edit = document.getElementById("category-edit");
+const input_category = document.getElementById("input-category");
+const confirm_category = document.getElementById("confirm-category");
 
-add_category.addEventListener("click", () =>{
-    add_category.classList.toggle("active");
-    input_category.style.display = "";
-    add_category.parentElement.style.display = "none";
+add_category.addEventListener("click", (event) =>{
+    if(!add_category.classList.contains('del-category')){
+        add_category.classList.add("del-category");
+    }
+    else{
+        add_category.classList.remove('del-category');
+    }
 })
 
-const input_category = document.getElementById("input-category");
-
-input_category.addEventListener("click", (event) => {
-    if(event.target.closest("#del-category")){
-        input_category.style.display = "none"
-        add_category.parentElement.style.display = "";
+add_category.addEventListener("transitionend", (e) => {
+    if (e.target === add_category) {
+        if(add_category.classList.contains("del-category")){
+            input_category.style.display = "";
+            category_edit.style.display = "none";
+        }
+        else{
+            input_category.style.display = "none";
+            input_category.value = "";
+            category_edit.style.display = "";
+        }
     }
-    
-    const input = input_category.querySelector("input");
-    
-    console.log(input.value.length)
+});
 
-    if(event.target.closest("#confirm-category") && input.value.length > 0){
-        const category_edit = document.getElementById("category-edit");
+confirm_category.addEventListener("click", (event) => {
+    if(input_category.value.length > 0){
         const options = category_edit.querySelectorAll("option");
         let isNewOption = true;
 
         options.forEach(option => {
-            if(option.textContent === input.value){
+            if(option.textContent === input_category.value){
                 option.selected = true;
                 isNewOption = false;
-                console.log(option)
-                console.log(isNewOption)
             }
         })
 
         if(isNewOption){
-            category_edit.add(new Option(input.value, null, false, true));
+            category_edit.add(new Option(input_category.value, null, false, true));
         }
 
-        input_category.style.display = "none"
-        add_category.parentElement.style.display = "";
+        add_category.classList.remove('del-category');
     }
 })
 
 function editButton(buttonId){
     let button = document.getElementById(buttonId);
     initialData = new FormData();
-    let id = button.id;
-    let name = button.querySelector('span').textContent;
-    let img = button.querySelector('img').src;
-    let category = button.dataset.category;
+    let id = "";
+    let name = "";
+    let img = "/images/Capturar.PNG";
+    let category = "";
+    let categoryName = "";
+
+    if(button){
+        id = button.id;
+        name = button.querySelector('span').textContent;
+        img = button.querySelector('img').src;
+        category = button.dataset.category;
+        categoryName = category_selector.querySelector(`option[value="${category}"]`)?.textContent;
+    }
 
     initialData.append('id', id)
     initialData.append('name', name);
-    initialData.append('img', img);
-    initialData.append('category', category)
+    initialData.append('image', img);
+    initialData.append('category', categoryName);
     currentData = initialData;
 
-    form_button_edit.querySelector('img').src = initialData.get('img');
+    form_button_edit.querySelector('#imageUrl').value = initialData.get('image');
+    form_button_edit.querySelector('img').src = initialData.get('image');
     form_button_edit.querySelector('#input-btn-id').value = initialData.get('id');
     form_button_edit.querySelector('#input-btn-name').value = initialData.get('name');
-    form_button_edit.querySelector('#category-edit').value = initialData.get('category');
+    form_button_edit.querySelector('#category-edit').value = category;
     form_button_edit.parentElement.style.display = "flex";
 }
 
 // Detectar mudanças no formulário
 form_button_edit.addEventListener("change", () => {
-    currentData = new FormData(form_button_edit);
+    attCurrentData();
 });
+
+function attCurrentData(){
+    currentData = new FormData(form_button_edit);
+    let category = category_edit.options[category_edit.selectedIndex].textContent;
+    currentData.set('category', category);
+}
 
 // Comparar dois objetos FormData
 function areFormsEqual(data1, data2) {
@@ -239,6 +351,10 @@ function fecharForm(){
          // Requerido para exibir o alerta
         if(confirm("Deseja descartar as alterações?")){
             form_button_edit.parentElement.style.display = "";
+            console.log(currentData.get('id'));
+            console.log(currentData.get('name'));
+            console.log(currentData.get('image'));
+            console.log(currentData.get('category'));
             currentData = "";
         }
     }
@@ -247,32 +363,36 @@ function fecharForm(){
     }
 }
 
+form_button_edit.addEventListener('submit', async (event) => {
+    event.preventDefault();
 
-// Dados a serem enviados para o 
-function atualizarDados(botao, posicao, visivel){
-    const data = {
-        id: botao,
-        position: posicao,
-        visible: visivel
-      };
-      
-      // Usando o fetch para enviar os dados
-      fetch('https://example.com/api/submit', {
-        method: 'POST', // Método HTTP
-        headers: {
-          'Content-Type': 'application/json' // Indicando que os dados são no formato JSON
-        },
-        body: JSON.stringify(data) // Convertendo o objeto para uma string JSON
-      })
-      .then(response => response.json()) // Convertendo a resposta em JSON
-      .then(data => {
-        console.log("Success:", data); // Manipule a resposta do servidor
-      })
-      .catch((error) => {
-        console.error("Error:", error); // Manipule qualquer erro
-      });
-}
+    saveButton(currentData);
+});
   
+
+async function saveButton(buttonForm){
+    const formData = Object.fromEntries(buttonForm); // Converte os dados do formulário em um objeto
+
+    console.log(formData);
+
+    try {
+        const response = await fetch(`/button/${formData.id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData),
+        });
+
+        if (response.ok) {
+            console.log('Formulário enviado');
+            initialData = buttonForm;
+            location.reload();
+        } else {
+            console.error('Erro ao enviar o formulário');
+        }
+    } catch (error) {
+        console.error('Erro na requisição:', error);
+    }
+}
 
 main_boards.addEventListener("click", function(event){
     let boardClicked = event.target.closest(".boards");
@@ -420,19 +540,44 @@ edit_switch.addEventListener('change', (event) => {
     searchButtons();
 })
 
+add_button.addEventListener("click", () => {
+    editButton();
+})
+
+// btn_content.addEventListener('touchstart', function(event) {
+//     event.preventDefault(); // Impede o arrasto no mobile
+// });
+
+// btn_content.addEventListener('touchmove', function(event) {
+//     event.preventDefault(); // Impede o movimento de arrasto
+// });
+
+
 main_buttons.addEventListener('dragstart', (e) => {
     e.target.classList.add('dragging');
 })
 
+// main_buttons.addEventListener('touchstart', (e) => {
+//     e.target.classList.add('dragging');
+// })
+
 main_buttons.addEventListener('dragend', (e) => {
     e.target.classList.remove('dragging');
 })
+
+// main_buttons.addEventListener('touchend', (e) => {
+//     e.target.classList.remove('dragging');
+// })
 
 let isAnimating = false;
 
 main_buttons.addEventListener('dragover', (button) => {
     ordenar(button);
 })
+
+// main_buttons.addEventListener('touchover', (button) => {
+//     ordenar(button);
+// })
 
 function attOrder(){
     let buttons = main_buttons.querySelectorAll('.buttons')
@@ -654,7 +799,7 @@ const del_search = document.getElementById("del-search");
 
 // Lógica de busca em tempo real
 searchInput.addEventListener("input", () => {
-    searchValue = searchInput.value;
+    searchValue = searchInput.value.toLowerCase();
     del_search.style.display = searchInput.value != "" ? "flex" : "none"
 
     searchButtons();

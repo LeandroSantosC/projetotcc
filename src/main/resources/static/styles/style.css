@@ -22,6 +22,12 @@ body::-webkit-scrollbar-thumb {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
+    overflow: clip;
+}
+
+img, table {
+    max-width: 100%;
+    height: auto; /* Mantém a proporção da imagem */
 }
 
 body, header{
@@ -47,8 +53,7 @@ body{
 header{
     flex-direction: row;
     position: sticky;
-    padding: 1.5%;
-    top:0;
+    overflow: hidden;
     height: 5%;
     background-color: cornflowerblue;
 }
@@ -71,7 +76,7 @@ header{
     border-radius: 3.5vh;
     margin: 0.5vh 0.5vw;
     cursor: pointer;
-    box-shadow: 0px 2px 5px 0px;
+    box-shadow: 0px 0.15rem 0.4rem 0px;
     transition: filter 0.3s ease;
 }
 
@@ -103,6 +108,7 @@ header{
     width: 100%;
     position: absolute;
     flex-direction: row;
+    overflow: visible;
 }
 
 .btn-content{
@@ -211,6 +217,7 @@ header{
     height: 20vh;
     /* height: 40vw; */
     background-color: cornflowerblue;
+    touch-action: cross-slide-x;
 }
 
 #board-cards{
@@ -249,7 +256,7 @@ header{
 
 .tools-tab{
     display: flex;
-    position: relative;
+    position: sticky;
     justify-content: center;
     align-items: center;
     flex-direction: row;
@@ -326,19 +333,20 @@ header{
     flex-basis: calc(20% - 2vw);
 }
 
-.content{
+#content{
     display: flex;
     flex-direction: row;
     width: 100%;
     height: auto;
     overflow-y: auto;
+    touch-action: cross-slide-y;
 }    
 
 .button-content::-webkit-scrollbar{
     display: none;
 }
 
-.category-selector, #input-category, #input-category input, #search-bar, #search-bar input{
+.category-selector, #category-edit, #input-category, #input-url-img, #input-url-img input, #search-bar, #search-bar input{
     display: flex;
     position: relative;
     align-items: center;
@@ -356,6 +364,13 @@ header{
     background-color: #f1f1f1;
     flex-direction: row;
     outline: none;
+    overflow: visible;
+}
+
+#category-edit{
+    padding-left: 12px;
+    opacity: 1;
+    visibility: visible;
 }
 
 #btn-search, #del-search{
@@ -395,9 +410,9 @@ header{
 
 .switch-tab{
     display: flex;
-    position: relative;
-    justify-content: space-evenly;
+    position: sticky;
     align-items: center;
+    justify-content: center;
     width: 100%;
     height: 3vh;
     margin: 1vh;
@@ -408,39 +423,43 @@ header{
 }
 
 .switch-tab div{
-    font-size: 3vh;
+    font-size: 2.5vh;
+    width: fit-content;
     transition: 0.3s;
     cursor: pointer;
 }
 
 .switch-tab label{
-    flex: 1;
+    flex: 0;
+    justify-content: center;
     text-align: center;
+    overflow: visible;
 }
 
 #tab-button{
-    transform: translateX(-10%);
+    transform: translateX(-100%);
 }
 
 #tab-board{
-    transform: translateX(10%);
+    transform: translateX(75%);
 }
 
 .switch-tab input:checked + #tab-button{
-    transform: translateX(50%);
+    transform: translateX(30%);
 }
 
 .switch-tab input:checked + #tab-board{
-    transform: translateX(-50%);
+    transform: translateX(-25%);
 }
 
 .switch-tab input:checked + div{
-    font-size: 5vh;
+    font-size: 4.5vh;
     color: #2196F3;
     text-decoration: underline #2196F3 2px;
     position: relative;
     cursor: pointer;
     transition: 0.4s;
+    z-index: 100;
 }
 
  /* Estilo do botão de liga/desliga (on/off) */
@@ -468,6 +487,7 @@ header{
     cursor: pointer;
     height: 100%;
     width: auto;
+    margin: 0;
     aspect-ratio: 1;
     background-color:#f1f1f1;
     border: transparent;
@@ -592,6 +612,7 @@ header{
     height: 100vh;
     width: 40vh;
     gap: 1.5vh;
+    overflow: visible;
 }
 
 .button-file{
@@ -646,10 +667,17 @@ header{
     font-size: 4vh;
 }
 
-#category-edit, #input-category{
-    height: 100%;
+#category-edit, #input-category, #input-url-img, #input-url-img input{
+    height: 6vh;
     width: 100%;
     margin: 0;
+    transition: all 0.5s ease-in-out;
+}
+
+#input-url-img{
+    overflow: hidden;
+    align-self: center;
+    transition: width 0.5s ease-in-out 0.5s, transform 0.5s ease-in-out;
 }
 
 #sound-edit{
@@ -661,6 +689,7 @@ header{
     border-radius: 35px;
     justify-content: center;
     align-items: center;
+    overflow: visible;
 }
 
 .animated-btn, .animated-btn ~ button{
@@ -693,6 +722,14 @@ header{
     transition: scale 0.3s;
 }
 
+.active#select-sound-btn ~ button:nth-child(2){
+    transform: translate(-5rem, 0rem);
+}
+
+.active#select-sound-btn ~ button:nth-child(3){
+    transform: translate(-10rem, 0rem);
+}
+
 .active ~ button:nth-of-type(2){
     transform: translate(-4.2rem, 0.5rem);
 }
@@ -701,7 +738,6 @@ header{
     transform: translate(-1.5rem, 4rem);
     transition-delay: 0.25s;
 }
-
 
 #record-sound-btn, #select-sound-btn{
     position: absolute;
@@ -719,7 +755,7 @@ header{
  font-size: 5vh;
 }
 
-#confirm-category, #del-category, #add-category{
+#confirm-category, #add-category{
     position: absolute;
     z-index: 100;
     bottom: 0;
@@ -728,22 +764,71 @@ header{
     border-radius: 50%;
     aspect-ratio: 1/1;
     margin: 0;
-}
-
-#record-sound-btn, #discard-btn, #del-category, #add-category{
-    left: 0;
-}
-
-#discard-btn, #del-category{
-    background-color: crimson;
-}
-
-#add-category{
-    background-color: #2196F3;
+    overflow: visible;
     transition: all 0.5s ease-in-out;
 }
 
-#save-btn, #confirm-category{
+#record-sound-btn, #discard-btn, #add-category, #confirm-category{
+    left: 0;
+}
+
+#add-category.del-category{
+    transform: rotate(-45deg);
+    background-color: crimson;
+}
+
+#discard-btn, .del-category{
+    background-color: crimson;
+}
+
+#add-category, #confirm-category{
+    background-color: #2196F3;
+}
+
+.del-category ~ #confirm-category{
+    left: 100%;
+    transform: translateX(-100%);
+    z-index: 100;
+    visibility: visible;
+}
+
+#generate-img{
+    display: flex;
+    position: absolute;
+    top: 2%;
+    left: 2%;
+    margin: 0;
+}
+#input-btn-name::placeholder{
+    font-size: 4vh;
+}
+
+#category-edit option[disabled] {
+    color: gray;
+    font-size: 3vh;
+  }
+
+#input-category{
+    opacity: 0;
+    visibility: hidden;
+}
+
+.del-category ~ #input-category{
+    opacity: 1;
+    visibility: visible;
+}
+
+.del-category ~ #category-edit{
+    opacity: 0;
+    visibility: hidden;
+}
+
+#confirm-category{
+    z-index: 0;
+    visibility: hidden;
+}
+
+#save-btn{
     right: 0;
 }
 
@@ -766,6 +851,13 @@ header{
 
 .dragging{
     opacity: 0;
+}
+
+
+#input-url-img.disabled{
+    width: 6vh;
+    transform: translateY(10vh);
+    transition: width 0.5s ease-in-out, transform 0.5s ease-in-out 0.5s;
 }
 
 .buttons.moveright{

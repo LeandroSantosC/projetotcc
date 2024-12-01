@@ -2,6 +2,7 @@ package br.com.matraca.projetotcc.controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -70,6 +72,33 @@ public class ButtonController {
 
         return ResponseEntity.ok("Ordem dos botões salva no banco de dados!");
     }
+
+    @PostMapping(value = "scrap", consumes = "text/plain", produces = "text/plain")
+    public ResponseEntity<String> scrap(@RequestBody String buttonName) throws IOException {
+        String url = scrap.getImage(buttonName);
+        
+        return ResponseEntity.ok(url);
+    }
+
+    @PatchMapping("{id}")
+    public ResponseEntity<String> patchResource(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
+        service.patch(id, updates);
+        return ResponseEntity.ok("Recurso atualizado parcialmente com sucesso!");
+    }
+
+    @PatchMapping("/")
+    public ResponseEntity<String> patchResource(@RequestBody Map<String, Object> updates) throws IOException {
+
+        String name = updates.containsKey("name") ? (String) updates.get("name") : "";
+        String image = updates.containsKey("image") ? (String) updates.get("image") : "";
+        String category = updates.containsKey("category") ? (String) updates.get("category") : null;
+        String sound = updates.containsKey("sound") ? (String) updates.get("sound") : "";
+
+
+        service.save(name, image, sound, category);
+        return ResponseEntity.ok("Recurso atualizado parcialmente com sucesso!");
+    }
+
 
     @DeleteMapping("{id}")
     public ResponseEntity<String> deleteButton(@PathVariable Long id) {

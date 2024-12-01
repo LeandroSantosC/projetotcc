@@ -3,6 +3,7 @@ package br.com.matraca.projetotcc.service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
@@ -50,7 +51,10 @@ public class ButtonService {
     @Transactional // PRECISO APRENDER A USAR MELHOR, E ABSTRAIR MAIS ESSE MÉTODO SAVE
     public Button save(String name, String image, String sound, String category) throws IOException{     
         Button button = repository.findByName(name).orElseGet(() -> {
-            return new Button();
+            Button newButton = new Button();
+            newButton.setVisible(true);
+            newButton.setPosition(orderCont++);
+            return newButton;
         });
 
         Category categoryObject = crepository.findByName(category).orElseGet(() -> {
@@ -72,8 +76,6 @@ public class ButtonService {
         button.setName(name);
         button.setSound(sound);
         button.setCategory(categoryObject);
-        button.setVisible(true);
-        button.setPosition(orderCont++);
 
         return repository.save(button);
     }
@@ -92,6 +94,43 @@ public class ButtonService {
         }
 
         repository.saveAll(buttonsAtt);
+    }
+
+    public void patch(Long id, Map<String, Object> updates){
+        Button button = repository.findById(id)
+        .orElseGet(() -> {
+            Button newButton = new Button();
+            newButton.setVisible(true);
+            newButton.setPosition(orderCont++);
+            return newButton;
+        });
+
+        if (updates.containsKey("name")) {
+            button.setName((String) updates.get("name"));
+        }
+        if (updates.containsKey("image")) {
+            button.setImage((String) updates.get("image"));
+        }
+        if (updates.containsKey("sound")) {
+            button.setSound((String) updates.get("sound"));
+        }
+        if (updates.containsKey("category")) {
+            Category category = crepository.findByName((String) updates.get("category"))
+            .orElseGet(() -> {
+                Category newCategory = new Category();
+                newCategory.setName((String) updates.get("category"));
+                newCategory.setButtons(new ArrayList<>());
+                return newCategory;
+            });
+
+            if(!category.getButtons().contains(button)){
+                category.getButtons().add(button);
+            }
+
+            button.setCategory(category);
+        }
+    
+        repository.save(button);
     }
 
     public void deleteButton(Long id) {
