@@ -345,7 +345,7 @@ function areFormsEqual(data1, data2) {
 }
 
 
-function fecharForm(){
+function fecharForm(event){
     if (!areFormsEqual(initialData, currentData)) {
         event.preventDefault();
          // Requerido para exibir o alerta
@@ -648,16 +648,9 @@ function sendChangesOnLogout() {
 }
 
 window.onbeforeunload = function(event) {
-    fecharForm();
+    fecharForm(event);
     sendChangesOnLogout();
 };
-
-window.addEventListener("beforeunload", (event) => {
-    if (isFormDirty) {
-        event.preventDefault();
-        event.returnValue = "Você tem mudanças não salvas. Deseja sair?";
-    }
-});
 
 function ordenar(event) {
     event.preventDefault();

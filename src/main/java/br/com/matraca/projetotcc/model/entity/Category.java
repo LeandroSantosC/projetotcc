@@ -3,8 +3,11 @@ package br.com.matraca.projetotcc.model.entity;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -35,7 +38,8 @@ public class Category {
     @NotEmpty
     private String name;
 
-    @OneToMany(mappedBy = "category", cascade=CascadeType.MERGE ,orphanRemoval = false)
+    @JsonIgnore
+    @OneToMany(mappedBy = "category", cascade=CascadeType.MERGE, orphanRemoval = false)
     private List<Button> buttons;
     
     // public Category(ButtonRequestDTO data){ //construtor para inicializar um objeto pelo Request, possibilitando a conversão
@@ -55,14 +59,14 @@ public class Category {
         this.name = this.name != null ? this.name.toLowerCase() : null;
     }
 
-    @Override
-public String toString() {
-    return "Category [id=" + id + 
-           ", name=" + name + 
-           ", buttons=" + 
-           buttons.stream()
-                  .map(button -> button.getName()) // Converte cada botão para seu nome
-                  .collect(Collectors.joining(", ")) + // Junta os nomes em uma string separada por vírgulas
-           "]";
-}
+//     @Override
+// public String toString() {
+//     return "Category [id=" + id + 
+//            ", name=" + name + 
+//            ", buttons=" + 
+//            buttons.stream()
+//                   .map(button -> button.getName()) // Converte cada botão para seu nome
+//                   .collect(Collectors.joining(", ")) + // Junta os nomes em uma string separada por vírgulas
+//            "]";
+// }
 }

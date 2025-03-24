@@ -55,10 +55,10 @@ public class Button {
         this.name = this.name != null ? this.name.toLowerCase() : null;
     }
 
-    @Override
-    public String toString() {
-        return "Button [id=" + id + ", name=" + name + ", image=" + image + ", sound=" + sound + ", category="
-                + category + ", position=" + position + ", isVisible=" + isVisible + "]";
-    }
+    // @Override
+    // public String toString() {
+    //     return "Button [id=" + id + ", name=" + name + ", image=" + image + ", sound=" + sound + ", category="
+    //             + category + ", position=" + position + ", isVisible=" + isVisible + "]";
+    // }
 
 }
