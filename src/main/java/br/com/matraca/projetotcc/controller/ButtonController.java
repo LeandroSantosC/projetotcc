@@ -99,6 +99,21 @@ public class ButtonController {
         return ResponseEntity.ok("Recurso atualizado parcialmente com sucesso!");
     }
 
+    @PatchMapping("/list")
+    public ResponseEntity<String> patchResource(@RequestBody List<Map<String, Object>> updatesList) throws IOException {
+
+        for (Map<String, Object> updates : updatesList) {
+            String name = updates.containsKey("name") ? (String) updates.get("name") : "";
+            String image = updates.containsKey("image") ? (String) updates.get("image") : "";
+            String category = updates.containsKey("category") ? (String) updates.get("category") : null;
+            String sound = updates.containsKey("sound") ? (String) updates.get("sound") : "";
+
+            service.save(name, image, sound, category);
+        }
+
+        return ResponseEntity.ok("Todos os recursos foram atualizados com sucesso!");
+    }
+
 
     @DeleteMapping("{id}")
     public ResponseEntity<String> deleteButton(@PathVariable Long id) {
