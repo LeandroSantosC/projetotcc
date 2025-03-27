@@ -18,5 +18,6 @@ public interface CategoryRepository extends CrudRepository<Category, Long>{
 
     Optional<Category> findByName(String name); //porque tem que ser interface? -- preciso lembrar sobre <A,A>
     List<Category> findByNameContaining(String name);
+    boolean existsByName(String name);
 
 }

@@ -1,11 +1,22 @@
 package br.com.matraca.projetotcc.controller;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import br.com.matraca.projetotcc.model.entity.Category;
+import br.com.matraca.projetotcc.dto.ButtonDTO;
 import br.com.matraca.projetotcc.model.entity.Button;
 import br.com.matraca.projetotcc.service.ButtonService;
 
@@ -26,5 +37,36 @@ public class CardController {
         }
         
         return buttons;
+    }
+
+    @PatchMapping("{id}")
+    public ResponseEntity<String> updateCard(@PathVariable Long id, @RequestBody Button updates) {
+        service.update(id, updates);
+        return ResponseEntity.ok("Recurso atualizado parcialmente com sucesso!");
+    }
+
+    @PostMapping("/")
+    public ResponseEntity<String> createCard(@RequestBody Button newCard) throws IOException {
+
+        service.create(newCard);
+        return ResponseEntity.ok("Recurso atualizado parcialmente com sucesso!");
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<String> deleteCard(@PathVariable Long id) throws IOException {
+
+
+        service.delete(id);
+        return ResponseEntity.ok("Recurso atualizado parcialmente com sucesso!");
+    }
+
+    @PostMapping("update-layout")
+    public ResponseEntity<String> updateButtonOrder(@RequestBody List<ButtonDTO> buttonsDTO) {
+        service.saveLayoutButtons(buttonsDTO);
+        for(ButtonDTO button: buttonsDTO){
+            System.out.println(button);
+        }
+
+        return ResponseEntity.ok("Ordem dos botões salva no banco de dados!");
     }
 }

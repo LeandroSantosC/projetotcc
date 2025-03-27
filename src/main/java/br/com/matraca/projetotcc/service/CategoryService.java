@@ -2,6 +2,7 @@ package br.com.matraca.projetotcc.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,11 +22,21 @@ public class CategoryService {
     ButtonService button;
 
     public Category save(Category category){
-        // if(category.getId() == null && repository.findByName(category.getName().toLowerCase()) != null){
-        //     // VERIFICAR SE VIA PRECISAR ADICIONAR ERRO NO RETORNO
-        //     return null;
-        // }
-        return this.repository.save(category);
+        return repository.findByName(category.getName())
+        .orElseGet(() -> {
+            category.setButtons(new ArrayList<>());
+            return repository.save(category);
+        });
+    }
+
+    public Category save(String category){
+        return repository.findByName(category)
+        .orElseGet(() -> {
+            Category newCategory = new Category();
+            newCategory.setName(category);
+            newCategory.setButtons(new ArrayList<>());
+            return repository.save(newCategory);
+        });
     }
 
     public Iterable<Button> getAllButtons(Category category){

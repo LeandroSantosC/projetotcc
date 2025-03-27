@@ -1,10 +1,12 @@
 package br.com.matraca.projetotcc.model.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -34,6 +36,7 @@ public class Category {
     private Long id;
 
     @NotEmpty
+    @Column(unique = true)
     private String name;
 
     @JsonIgnore
@@ -45,9 +48,16 @@ public class Category {
     // }
 
     public void addButton(Button button){
-        if(!buttons.contains(button)){
-            buttons.add(button);
-            button.setCategory(this);
+        if (this.buttons == null) {
+            this.buttons = new ArrayList<>();
+        }
+
+        if (!this.buttons.contains(button)) {
+            this.buttons.add(button);
+            button.setCategory(this);  // se você também deseja garantir a associação do botão com a categoria
+        }
+        else{
+            throw new IllegalArgumentException("Button already exists in this category");
         }
     }
 

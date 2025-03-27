@@ -81,8 +81,8 @@ public class ButtonController {
     }
 
     @PatchMapping("{id}")
-    public ResponseEntity<String> patchResource(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
-        service.patch(id, updates);
+    public ResponseEntity<String> patchResource(@PathVariable Long id, @RequestBody Button updates) {
+        service.update(id, updates);
         return ResponseEntity.ok("Recurso atualizado parcialmente com sucesso!");
     }
 
@@ -95,7 +95,7 @@ public class ButtonController {
         String sound = updates.containsKey("sound") ? (String) updates.get("sound") : "";
 
 
-        service.save(name, image, sound, category);
+        service.create(name, image, sound, category);
         return ResponseEntity.ok("Recurso atualizado parcialmente com sucesso!");
     }
 
@@ -108,7 +108,7 @@ public class ButtonController {
             String category = updates.containsKey("category") ? (String) updates.get("category") : null;
             String sound = updates.containsKey("sound") ? (String) updates.get("sound") : "";
 
-            service.save(name, image, sound, category);
+            service.create(name, image, sound, category);
         }
 
         return ResponseEntity.ok("Todos os recursos foram atualizados com sucesso!");
@@ -118,7 +118,7 @@ public class ButtonController {
     @DeleteMapping("{id}")
     public ResponseEntity<String> deleteButton(@PathVariable Long id) {
         try {
-            service.deleteButton(id);
+            service.delete(id);
             return ResponseEntity.ok("Botão excluído com sucesso.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro: Botão não encontrado.");
@@ -129,54 +129,54 @@ public class ButtonController {
     public void cadastrarButton() throws IOException {
 
         // Verbos
-        service.save("comer", "", "som", "verbos");
-        service.save("dormir", "", "som", "verbos");
-        service.save("cagar", "", "som", "verbos");
-        service.save("trabalhar", "", "som", "verbos");
+        service.create("comer", "", "som", "verbos");
+        service.create("dormir", "", "som", "verbos");
+        service.create("cagar", "", "som", "verbos");
+        service.create("trabalhar", "", "som", "verbos");
 
         // Frutas
-        service.save("maçã", "", "som", "frutas");
-        service.save("banana", "", "som", "frutas");
-        service.save("laranja", "", "som", "frutas");
+        service.create("maçã", "", "som", "frutas");
+        service.create("banana", "", "som", "frutas");
+        service.create("laranja", "", "som", "frutas");
 
         // Animais
-        service.save("cachorro", "", "som", "animais");
-        service.save("gato", "", "som", "animais");
-        service.save("elefante", "", "som", "animais");
+        service.create("cachorro", "", "som", "animais");
+        service.create("gato", "", "som", "animais");
+        service.create("elefante", "", "som", "animais");
 
         // Sentimentos
-        service.save("feliz", "", "som", "sentimentos");
-        service.save("triste", "", "som", "sentimentos");
-        service.save("bravo", "", "som", "sentimentos");
+        service.create("feliz", "", "som", "sentimentos");
+        service.create("triste", "", "som", "sentimentos");
+        service.create("bravo", "", "som", "sentimentos");
 
         // Cores
-        service.save("vermelho", "", "som", "cores");
-        service.save("azul", "", "som", "cores");
-        service.save("verde", "", "som", "cores");
-        service.save("amarelo", "", "som", "cores");
+        service.create("vermelho", "", "som", "cores");
+        service.create("azul", "", "som", "cores");
+        service.create("verde", "", "som", "cores");
+        service.create("amarelo", "", "som", "cores");
 
         // Locais
-        service.save("casa", "", "som", "locais");
-        service.save("escola", "", "som", "locais");
-        service.save("parque", "", "som", "locais");
-        service.save("supermercado", "", "som", "locais");
+        service.create("casa", "", "som", "locais");
+        service.create("escola", "", "som", "locais");
+        service.create("parque", "", "som", "locais");
+        service.create("supermercado", "", "som", "locais");
 
         // Profissões
-        service.save("médico", "", "som", "profissões");
-        service.save("professor", "", "som", "profissões");
-        service.save("bombeiro", "", "som", "profissões");
-        service.save("engenheiro", "", "som", "profissões");
+        service.create("médico", "", "som", "profissões");
+        service.create("professor", "", "som", "profissões");
+        service.create("bombeiro", "", "som", "profissões");
+        service.create("engenheiro", "", "som", "profissões");
 
         // Pronomes
-        service.save("eu", "", "som", "pronomes");
-        service.save("você", "", "som", "pronomes");
-        service.save("ele", "", "som", "pronomes");
-        service.save("nós", "", "som", "pronomes");
+        service.create("eu", "", "som", "pronomes");
+        service.create("você", "", "som", "pronomes");
+        service.create("ele", "", "som", "pronomes");
+        service.create("nós", "", "som", "pronomes");
 
         // Números
-        service.save("um", "", "som", "números");
-        service.save("dois", "", "som", "números");
-        service.save("três", "", "som", "números");
-        service.save("quatro", "", "som", "números");
+        service.create("um", "", "som", "números");
+        service.create("dois", "", "som", "números");
+        service.create("três", "", "som", "números");
+        service.create("quatro", "", "som", "números");
     }
 }

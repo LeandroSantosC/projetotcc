@@ -3,7 +3,6 @@ package br.com.matraca.projetotcc.service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
@@ -24,7 +23,7 @@ public class ButtonService {
     ButtonRepository repository;
 
     @Autowired
-    CategoryRepository crepository;
+    CategoryService categoryService;
 
     @Autowired
     Scraping scrap;
@@ -49,7 +48,7 @@ public class ButtonService {
     // }
 
     @Transactional // PRECISO APRENDER A USAR MELHOR, E ABSTRAIR MAIS ESSE MÉTODO SAVE
-    public Button save(String name, String image, String sound, String category) throws IOException{     
+    public Button create(String name, String image, String sound, String category) throws IOException{     
         Button button = repository.findByName(name).orElseGet(() -> {
             Button newButton = new Button();
             newButton.setVisible(true);
@@ -57,12 +56,8 @@ public class ButtonService {
             return newButton;
         });
 
-        Category categoryObject = crepository.findByName(category).orElseGet(() -> {
-            Category object = new Category();
-            object.setName(category);
-            object.setButtons(new ArrayList<>());
-            return object;
-        });
+        Category categoryObject = categoryService.save(category);
+        button.setCategory(categoryObject);
 
         if(!categoryObject.getButtons().contains(button)){
             categoryObject.getButtons().add(button);
@@ -78,6 +73,50 @@ public class ButtonService {
         button.setCategory(categoryObject);
 
         return repository.save(button);
+    }
+
+    @Transactional // PRECISO APRENDER A USAR MELHOR, E ABSTRAIR MAIS ESSE MÉTODO SAVE
+    public Button create(String name, String image, String sound, Category category) throws IOException{     
+        Button button = repository.findByName(name).orElseGet(() -> {
+            Button newButton = new Button();
+            newButton.setVisible(true);
+            newButton.setPosition(orderCont++);
+            return newButton;
+        });
+
+        category = categoryService.save(category);
+        category.addButton(button);
+        button.setCategory(category);
+
+        if("".equals(image)){
+            image = scrap.getImage(name);
+        }
+
+        button.setImage(image);
+        button.setName(name);
+        button.setSound(sound);
+
+        return repository.save(button);
+    }
+
+    @Transactional // PRECISO APRENDER A USAR MELHOR, E ABSTRAIR MAIS ESSE MÉTODO SAVE
+    public Button create(Button newButton) throws IOException{ 
+        
+        if(repository.existsByName(newButton.getName())){
+            throw new RuntimeException("Botão já existe com o nome: " + newButton.getName());
+        }
+        
+        Category category = categoryService.save(newButton.getCategory());
+        category.addButton(newButton);
+        newButton.setCategory(category);
+        newButton.setVisible(true);
+        newButton.setPosition(orderCont++);
+
+        if("".equals(newButton.getImage())){
+            newButton.setImage(scrap.getImage(newButton.getName()));
+        }
+
+        return repository.save(newButton);
     }
 
     public void saveLayoutButtons(List<ButtonDTO> buttons){
@@ -96,7 +135,7 @@ public class ButtonService {
         repository.saveAll(buttonsAtt);
     }
 
-    public void patch(Long id, Map<String, Object> updates){
+    public void update(Long id, Button updates){
         Button button = repository.findById(id)
         .orElseGet(() -> {
             Button newButton = new Button();
@@ -105,39 +144,31 @@ public class ButtonService {
             return newButton;
         });
 
-        if (updates.containsKey("name")) {
-            button.setName((String) updates.get("name"));
+        if (updates.getName() != null) {
+            button.setName(updates.getName());
         }
-        if (updates.containsKey("image")) {
-            button.setImage((String) updates.get("image"));
+        if (updates.getImage() != null) {
+            button.setImage(updates.getImage());
         }
-        if (updates.containsKey("sound")) {
-            button.setSound((String) updates.get("sound"));
+        if (updates.getSound() != null) {
+            button.setSound(updates.getSound());
         }
-        if (updates.containsKey("category")) {
-            Category category = crepository.findByName((String) updates.get("category"))
-            .orElseGet(() -> {
-                Category newCategory = new Category();
-                newCategory.setName((String) updates.get("category"));
-                newCategory.setButtons(new ArrayList<>());
-                return newCategory;
-            });
+        if (updates.getCategory() != null) {
+            Category category = categoryService.save(updates.getCategory());
 
-            if(!category.getButtons().contains(button)){
-                category.getButtons().add(button);
-            }
-
+            category.addButton(button);
             button.setCategory(category);
         }
     
         repository.save(button);
     }
 
-    public void deleteButton(Long id) {
+    public void delete(Long id) {
         Button button = repository.findById(id)
             .orElseThrow(() -> new RuntimeException("Botão não encontrado com ID: " + id));
         repository.delete(button);
     }
+
 
     public Iterable<Button> getAllByCategory(Category category){
         return this.repository.findAllByCategory(category);
@@ -149,10 +180,6 @@ public class ButtonService {
 
     public Optional<Button> getById(Long id){
         return this.repository.findById(id);
-    }
-
-    public void delete(Button button){
-        repository.delete(button);
     }
 
 }
