@@ -28,11 +28,13 @@ public class ButtonService {
     @Autowired
     Scraping scrap;
 
-    public static int orderCont;
+    public static int orderCont = 1;
 
     public Iterable<Button> getAll(){
         Iterable<Button> buttonList = repository.findAll();
-        orderCont = (int) StreamSupport.stream(buttonList.spliterator(), false).count() + 1;
+        for (Button button : buttonList){
+            orderCont = button.getPosition() > orderCont ? button.getPosition() : orderCont;
+        }
         return buttonList;
     }
 

@@ -27,7 +27,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(of = "id") //indicar que o id é a representaçao unica da entidade
 public class Board {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) //o generationtype pode ser UID, que é a criacao de ID aleatorio para gerar mais segurança no DB
+    @GeneratedValue(strategy = GenerationType.SEQUENCE) //o generationtype pode ser UID, que é a criacao de ID aleatorio para gerar mais segurança no DB
     private Long id;
 
     @NotEmpty

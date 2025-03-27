@@ -1,6 +1,7 @@
 package br.com.matraca.projetotcc.model.entity;
 
 import java.util.List;
+import java.util.UUID;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -22,7 +23,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name="user")
+@Table(name="users") // é users pq user é uma palavra reservada do banco de dados
 @Getter //avisando pro lombok criar em tempo de execução todas os getters dos meus atributos
 @NoArgsConstructor // avisando pro lombok criar um construtor vazio
 @AllArgsConstructor // avisando pro lombok criar um construtor com todos os atributos
@@ -30,8 +31,8 @@ import lombok.NoArgsConstructor;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) //o generationtype pode ser UID, que é a criacao de ID aleatorio para gerar mais segurança no DB
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID) //o generationtype pode ser UID, que é a criacao de ID aleatorio para gerar mais segurança no DB
+    private UUID id;
     @NotEmpty
     private String name;
     @NotEmpty

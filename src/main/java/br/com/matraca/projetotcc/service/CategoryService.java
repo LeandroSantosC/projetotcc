@@ -6,10 +6,7 @@ import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import br.com.matraca.projetotcc.model.entity.Button;
 import br.com.matraca.projetotcc.model.entity.Category;
-import br.com.matraca.projetotcc.model.entity.User;
 import br.com.matraca.projetotcc.repository.CategoryRepository;
 
 @Service
@@ -17,9 +14,6 @@ public class CategoryService {
 
     @Autowired
     CategoryRepository repository;
-
-    @Autowired
-    ButtonService button;
 
     public Category save(Category category){
         return repository.findByName(category.getName())
@@ -37,10 +31,6 @@ public class CategoryService {
             newCategory.setButtons(new ArrayList<>());
             return repository.save(newCategory);
         });
-    }
-
-    public Iterable<Button> getAllButtons(Category category){
-        return button.getAllByCategory(category);
     }
 
     public Iterable<Category> getAll(){

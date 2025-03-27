@@ -9,6 +9,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PostPersist;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -28,7 +29,7 @@ import lombok.Setter;
 @EqualsAndHashCode(of = "id") //indicar que o id é a representaçao unica da entidade
 public class Button {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) //o generationtype pode ser UID, que é a criacao de ID aleatorio para gerar mais segurança no DB
+    @GeneratedValue(strategy = GenerationType.SEQUENCE) //o generationtype pode ser UID, que é a criacao de ID aleatorio para gerar mais segurança no DB
     private Long id;
 
     @NotEmpty
@@ -39,7 +40,7 @@ public class Button {
     private String image;
 
     @NotEmpty
-    private String sound;
+    private String sound = "";
 
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.EAGER) // CASCADE MUITO IMPORTANTE PARA PERSISTENCIA
     @JoinColumn(name = "category_id")
@@ -49,13 +50,14 @@ public class Button {
     private int position;
 
     @NotEmpty
-    private boolean isVisible;
+    private boolean isVisible = true;
 
     @PrePersist
     @PreUpdate
     private void convertNameToLowerCase() {
         this.name = this.name != null ? this.name.toLowerCase() : null;
     }
+
 
     // @Override
     // public String toString() {

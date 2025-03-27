@@ -1,7 +1,6 @@
 package br.com.matraca.projetotcc.controller;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.matraca.projetotcc.model.entity.Category;
-import br.com.matraca.projetotcc.dto.ButtonDTO;
 import br.com.matraca.projetotcc.model.entity.Button;
 import br.com.matraca.projetotcc.service.ButtonService;
 
@@ -58,15 +56,5 @@ public class CardController {
 
         service.delete(id);
         return ResponseEntity.ok("Recurso atualizado parcialmente com sucesso!");
-    }
-
-    @PostMapping("update-layout")
-    public ResponseEntity<String> updateButtonOrder(@RequestBody List<ButtonDTO> buttonsDTO) {
-        service.saveLayoutButtons(buttonsDTO);
-        for(ButtonDTO button: buttonsDTO){
-            System.out.println(button);
-        }
-
-        return ResponseEntity.ok("Ordem dos botões salva no banco de dados!");
     }
 }
