@@ -1,60 +1,76 @@
 package br.com.matraca.projetotcc.controller;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.matraca.projetotcc.model.entity.Category;
+import br.com.matraca.projetotcc.dto.ApiResponse;
+import br.com.matraca.projetotcc.model.entity.Auth;
 import br.com.matraca.projetotcc.model.entity.Button;
-import br.com.matraca.projetotcc.service.ButtonService;
-
+import br.com.matraca.projetotcc.model.entity.User;
+import br.com.matraca.projetotcc.service.Scraping;
+import br.com.matraca.projetotcc.service.UserService;
 
 @RestController
 @RequestMapping("/api/card")
 public class CardController {
 
-    @Autowired //essa anotação serve para indicar para o spring que quando ele for instaciar o controller ele deve injetar essa dependencia 
-    private ButtonService service;
-    
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private Scraping scrap;
+
     @GetMapping
-    public Iterable<Button> getCards() throws IOException{
-        Iterable<Button> buttons = service.getAll();
+    public ResponseEntity<ApiResponse<List<Button>>> getCards(@AuthenticationPrincipal Auth auth) {
+        User user = auth.getUser();
+        List<Button> buttons = user.getButton();
+        return ResponseEntity.ok(ApiResponse.success(buttons));
+    }
 
-        for(Button button : buttons){
-            System.out.println(button);
-        }
+    @PreAuthorize("hasRole('USER')")
+    @PatchMapping
+    public ResponseEntity<ApiResponse<Button>> updateCard(@AuthenticationPrincipal Auth auth, @RequestBody Button updates) {
+        User user = auth.getUser();
+        Button card = userService.updateCard(user, updates);
+
+        return ResponseEntity.ok(ApiResponse.success(card));
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @PostMapping
+    public ResponseEntity<ApiResponse<Button>> createCard(@AuthenticationPrincipal Auth auth, @RequestBody Button newCard) {
+        Button button = userService.createCard(auth.getUser(), newCard);
+
+        return ResponseEntity.ok(ApiResponse.success(button));
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @DeleteMapping
+    public ResponseEntity<ApiResponse<String>> deleteCard(@AuthenticationPrincipal Auth auth, @RequestBody Button button) {
+        User user = auth.getUser();
+
+        userService.deleteCard(user, button);
+
+        return ResponseEntity.ok(ApiResponse.success("Card " + button.getName() + " deletado com sucesso!"));
+    }
+
+    @PostMapping(value = "scrap", consumes = "text/plain", produces = "text/plain")
+        public ResponseEntity<ApiResponse<String>> scrap(@RequestBody String buttonName) throws IOException {
+        String url = scrap.getImage(buttonName);
         
-        return buttons;
+        return ResponseEntity.ok(ApiResponse.success(url));
     }
 
-    @PatchMapping("{id}")
-    public ResponseEntity<String> updateCard(@PathVariable Long id, @RequestBody Button updates) {
-        service.update(id, updates);
-        return ResponseEntity.ok("Recurso atualizado parcialmente com sucesso!");
-    }
-
-    @PostMapping("/")
-    public ResponseEntity<String> createCard(@RequestBody Button newCard) throws IOException {
-
-        service.create(newCard);
-        return ResponseEntity.ok("Recurso atualizado parcialmente com sucesso!");
-    }
-
-    @DeleteMapping("{id}")
-    public ResponseEntity<String> deleteCard(@PathVariable Long id) throws IOException {
-
-
-        service.delete(id);
-        return ResponseEntity.ok("Recurso atualizado parcialmente com sucesso!");
-    }
 }

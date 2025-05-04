@@ -1,6 +1,11 @@
 package br.com.matraca.projetotcc.model.entity;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -18,27 +23,44 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name="board")
 @Getter //avisando pro lombok criar em tempo de execução todas os getters dos meus atributos
+@Setter
 @NoArgsConstructor // avisando pro lombok criar um construtor vazio
 @AllArgsConstructor // avisando pro lombok criar um construtor com todos os atributos
 @EqualsAndHashCode(of = "id") //indicar que o id é a representaçao unica da entidade
 public class Board {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE) //o generationtype pode ser UID, que é a criacao de ID aleatorio para gerar mais segurança no DB
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID) //o generationtype pode ser UID, que é a criacao de ID aleatorio para gerar mais segurança no DB
+    private UUID id;
 
     @NotEmpty
     private String name;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToMany
-    private List<Button> button;
+    @JsonIgnoreProperties({"image", "sound", "category", "user", "position", "visible"})
+    @ManyToMany(fetch = FetchType.EAGER)
+    private List<Button> button = new ArrayList<>();
+
+    private int position;
+
+    private boolean isVisible = true;
+
+    public Board(String name, List<Button> buttons) {
+        this.name = name;
+        this.button = buttons;
+    }
+
+    public Board(UUID id){
+        this.id = id;
+    }
     
     // public Category(ButtonRequestDTO data){ //construtor para inicializar um objeto pelo Request, possibilitando a conversão
     //     this.name = data.name();
@@ -50,8 +72,4 @@ public class Board {
         this.name = this.name != null ? this.name.toLowerCase() : null;
     }
 
-    public void addButton(Iterable<Button> buttons) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addButton'");
-    }
 }

@@ -15,14 +15,6 @@ public class CategoryService {
     @Autowired
     CategoryRepository repository;
 
-    public Category save(Category category){
-        return repository.findByName(category.getName())
-        .orElseGet(() -> {
-            category.setButtons(new ArrayList<>());
-            return repository.save(category);
-        });
-    }
-
     public Category save(String category){
         return repository.findByName(category)
         .orElseGet(() -> {

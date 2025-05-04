@@ -36,12 +36,13 @@ public class Category {
     private Long id;
 
     @NotEmpty
-    @Column(unique = true)
     private String name;
 
     @JsonIgnore
     @OneToMany(mappedBy = "category", cascade=CascadeType.MERGE, orphanRemoval = false)
     private List<Button> buttons;
+
+    
     
     // public Category(ButtonRequestDTO data){ //construtor para inicializar um objeto pelo Request, possibilitando a conversão
     //     this.name = data.name();

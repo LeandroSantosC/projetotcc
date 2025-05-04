@@ -1,17 +1,17 @@
 package br.com.matraca.projetotcc.repository;
+import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-//aqui é onde eu faço o acesso ao meu BD, porem eu extendo o Jpa que ja tem esses métodos
-//e aponto meu objeto button para criar os métodos de acordo com a estruturação do objeto
 import org.springframework.stereotype.Repository;
 
 import br.com.matraca.projetotcc.model.entity.User;
+import br.com.matraca.projetotcc.model.enums.Role;
 
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long>{ //porque tem que ser interface? -- preciso lembrar sobre <A,A>
+public interface UserRepository extends JpaRepository<User, UUID>{ //porque tem que ser interface? -- preciso lembrar sobre <A,A>
 
-    User findByName(String nome);
     User findByEmail(String email);
-    
+    boolean existsByEmail(String email);
+    User getByCredentials_Role(Role role);
 }

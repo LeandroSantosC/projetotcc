@@ -11,6 +11,7 @@ import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlPage;
 import org.springframework.stereotype.Component;
 
+
 @Component
 public class Scraping {
 
