@@ -23,7 +23,7 @@ public class DataInitializer {
       @Bean
     CommandLineRunner init(AuthRepository authRepository, UserRepository userRepository) {
         return args -> {
-            if (authRepository.findByLogin("public").isEmpty()) {
+            if (authRepository.findByLogin("public@matraca.com.br").isEmpty()) {
                 User user = new User();
                 user.setFullname("Usuário Público");
                 user.setEmail("public@matraca.com.br");
@@ -34,7 +34,7 @@ public class DataInitializer {
                 System.out.println("Usuário público criado com sucesso.");
             }
 
-            if (authRepository.findByLogin("admin").isEmpty()) {
+            if (authRepository.findByLogin("admin@matraca.com.br").isEmpty()) {
                 User user = new User();
                 user.setFullname("Administrador");
                 user.setEmail("admin@matraca.com.br");
