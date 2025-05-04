@@ -100,6 +100,14 @@ public class AuthController {
     }
 
     @PreAuthorize("hasRole('USER')")
+    @GetMapping("/user")
+    public ResponseEntity<ApiResponse<User>> getUser(@AuthenticationPrincipal Auth auth) {
+        User user = auth.getUser();
+
+        return ResponseEntity.ok(ApiResponse.success(user));
+    }
+
+    @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/user")
     public ResponseEntity<ApiResponse<String>> deleteUser(@AuthenticationPrincipal Auth auth) {
         User user = auth.getUser();

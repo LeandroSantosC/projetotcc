@@ -46,7 +46,7 @@ public class BoardController {
 
     @PreAuthorize("hasRole('USER')")
     @PostMapping
-    public ResponseEntity<ApiResponse<Board>> createCard(@AuthenticationPrincipal Auth auth, @RequestBody Board newBoard) {
+    public ResponseEntity<ApiResponse<Board>> createBoard(@AuthenticationPrincipal Auth auth, @RequestBody Board newBoard) {
         User user = auth.getUser();
 
         Board board = userService.createBoard(user, newBoard);
@@ -57,7 +57,7 @@ public class BoardController {
 
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping
-    public ResponseEntity<ApiResponse<String>> deleteCard(@AuthenticationPrincipal Auth auth, @RequestBody Board board) {
+    public ResponseEntity<ApiResponse<String>> deleteBoard(@AuthenticationPrincipal Auth auth, @RequestBody Board board) {
         User user = auth.getUser();
         userService.deleteBoard(user, board);
 

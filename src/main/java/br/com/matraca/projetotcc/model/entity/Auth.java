@@ -38,16 +38,20 @@ import lombok.Setter;
 @EqualsAndHashCode(of = "id") //indicar que o id é a representaçao unica da entidade
 public class Auth implements UserDetails{
 
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.UUID) //o generationtype pode ser UID, que é a criacao de ID aleatorio para gerar mais segurança no DB
     private UUID id;
 
+    @JsonIgnore
     @Column(nullable = false)
     private boolean emailVerified = false;
 
+    @JsonIgnore
     @Column
     private String verificationToken;
 
+    @JsonIgnore
     @Column(unique = true, nullable = false)
     private String login;
 
