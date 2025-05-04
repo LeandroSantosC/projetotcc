@@ -33,10 +33,9 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST,"/auth/login", "/auth/register").permitAll()
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/card").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/auth/login", "/auth/register", "/auth/verify-email").permitAll()
                         .anyRequest()
-                        // .permitAll()
                         .authenticated()
                 )
                 .oauth2Login(oauth -> oauth

@@ -14,7 +14,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins("*") // Permite qualquer origem (mude conforme necessário)
                 .allowedHeaders("*") // Permite todos os cabeçalhos
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH") // Permite métodos específicos
-                // .allowCredentials(true) // Permite credenciais (como cookies ou headers de autenticação)
+                .allowCredentials(true) // Permite credenciais (como cookies ou headers de autenticação)
                 .maxAge(3600); // Define o tempo de vida do cache do CORS (em segundos)
     }
 }
