@@ -31,7 +31,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3001")); 
+        config.setAllowedOriginPatterns(List.of("*")); 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
@@ -47,14 +47,15 @@ public class SecurityConfig {
             CustomOAuth2UserService customOAuth2UserService,
             CustomOAuth2SuccessHandler successHandler) throws Exception {
         return httpSecurity
-                .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.GET, "/api/card").permitAll()
                 .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/register", "/auth/verify-email").permitAll()
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 )
