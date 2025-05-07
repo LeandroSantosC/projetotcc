@@ -106,7 +106,7 @@ public class ButtonService {
             }
         }
 
-        return newButton;
+        return repository.save(newButton);
     }
 
     @Transactional
@@ -162,7 +162,7 @@ public class ButtonService {
                     .ifPresent(existingButton -> updates.setCategory(existingButton.getCategory()));
         }
     
-        return button;
+        return repository.save(button);
     }
 
     // @Transactional

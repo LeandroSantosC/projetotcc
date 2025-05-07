@@ -46,7 +46,7 @@ public class BoardService {
         newBoard.setUser(user);
         userBoards.add(newBoard);
 
-        return newBoard;
+        return repository.save(newBoard);
     }
 
     @Transactional
@@ -90,6 +90,6 @@ public class BoardService {
             board.setButton(updates.getButton());
         }
     
-        return board;
+        return repository.save(board);
     }
 }
