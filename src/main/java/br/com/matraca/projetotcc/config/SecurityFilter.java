@@ -1,6 +1,7 @@
 package br.com.matraca.projetotcc.config;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -42,13 +43,13 @@ public class SecurityFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 } catch (Exception e) {
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    addCorsHeaders(response);
+                    addCorsHeaders(response, request);
                     response.getWriter().write("Erro ao validar usuário: " + e.getMessage());
                     return;
                 }
             } else {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                addCorsHeaders(response);
+                addCorsHeaders(response, request);
                 response.getWriter().write("Token inválido ou expirado");
                 return;
             }
@@ -70,9 +71,16 @@ public class SecurityFilter extends OncePerRequestFilter {
         return null;
     }
 
-    private void addCorsHeaders(HttpServletResponse response) {
-        response.setHeader("Access-Control-Allow-Origin", "http://localhost:3001");
-        response.setHeader("Access-Control-Allow-Credentials", "true");
+    private void addCorsHeaders(HttpServletResponse response, HttpServletRequest request) {
+        String origin = request.getHeader("Origin");
+        if (origin != null && List.of(
+            "http://localhost:3000",
+            "http://localhost:3001",
+            "https://matraca.onrender.com"
+        ).contains(origin)) {
+            response.setHeader("Access-Control-Allow-Origin", origin);
+            response.setHeader("Access-Control-Allow-Credentials", "true");
+        }
     }
     
 }
