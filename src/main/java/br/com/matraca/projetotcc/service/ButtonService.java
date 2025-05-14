@@ -84,11 +84,17 @@ public class ButtonService {
 
         userButtons.stream().filter(button
                 -> button.getCategory().getName().equalsIgnoreCase(newButton.getCategory().getName())
-        ).findFirst().ifPresent(existingButton
-                -> {
-                    Category categoryFound = existingButton.getCategory();
-                    categoryFound.addButton(newButton);
-                    categoryRepository.save(categoryFound);
+        ).findFirst().ifPresentOrElse(
+            existingButton  -> {
+            Category categoryFound = existingButton.getCategory();
+            categoryFound.addButton(newButton);
+            categoryRepository.save(categoryFound);
+        },
+                () -> {
+                    Category newCategory = new Category();
+                    newCategory.setName(newButton.getCategory().getName());
+                    newCategory.addButton(newButton);
+                    categoryRepository.save(newCategory);
                 }
         );
 
@@ -138,40 +144,51 @@ public class ButtonService {
             category.getButtons().remove(buttonToDelete);
             categoryRepository.save(category);
         }
-        
+
         return userButtons.remove(buttonToDelete);
     }
 
-    @Transactional
-    public Button update(User user, Button updates) throws RuntimeException {
-        List<Button> userButtons = user.getButton();
+@Transactional
+public Button update(User user, Button updates) {
+    List<Button> userButtons = user.getButton();
 
-        Button button = userButtons.stream()
-                .filter(b -> b.getId().equals(updates.getId()))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Botão não encontrado: ID-" + updates.getId()));
+    Button button = userButtons.stream()
+            .filter(b -> b.getId().equals(updates.getId()))
+            .findFirst()
+            .orElseThrow(() -> new RuntimeException("Botão não encontrado: ID-" + updates.getId()));
 
-        if (updates.getName() != null) {
-            button.setName(updates.getName());
-        }
-        if (updates.getImage() != null) {
-            button.setImage(updates.getImage());
-        }
-        if (updates.getSound() != null) {
-            button.setSound(updates.getSound());
-        }
-        if (updates.getCategory() != null) {
-            userButtons.stream().filter(b -> b.getCategory().getName().equalsIgnoreCase(updates.getCategory().getName()))
-                    .findFirst()
-                    .ifPresent(existingButton -> {
-                        Category categoryFound = existingButton.getCategory();
-                        categoryFound.addButton(button);
-                        categoryRepository.save(categoryFound);
-                    });
-        }
+    if (updates.getName() != null) button.setName(updates.getName());
+    if (updates.getImage() != null) button.setImage(updates.getImage());
+    if (updates.getSound() != null) button.setSound(updates.getSound());
 
-        return repository.save(button);
+    if (updates.getCategory() != null &&
+        !button.getCategory().getName().equalsIgnoreCase(updates.getCategory().getName())) {
+
+        Category oldCategory = button.getCategory();
+        oldCategory.getButtons().remove(button);
+        categoryRepository.save(oldCategory);
+
+        userButtons.stream()
+            .filter(b -> b.getCategory().getName().equalsIgnoreCase(updates.getCategory().getName()))
+            .findFirst()
+            .ifPresentOrElse(
+                existingButton -> {
+                    Category categoryFound = existingButton.getCategory();
+                    categoryFound.addButton(button);
+                    categoryRepository.save(categoryFound);
+                },
+                () -> {
+                    Category newCategory = new Category();
+                    newCategory.setName(updates.getCategory().getName());
+                    newCategory.addButton(button);
+                    categoryRepository.save(newCategory);
+                }
+            );
     }
+
+    return repository.save(button);
+}
+
 
     // @Transactional
     // public void delete(UUID id) {
