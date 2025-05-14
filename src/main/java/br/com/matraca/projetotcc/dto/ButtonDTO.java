@@ -2,7 +2,6 @@ package br.com.matraca.projetotcc.dto;
 
 import java.util.UUID;
 
-import br.com.matraca.projetotcc.model.entity.Category;
 
 public class ButtonDTO {
 
@@ -10,7 +9,7 @@ public class ButtonDTO {
     private String name;
     private String image;
     private String sound;
-    private Category category;
+    private String category;
     private int position;
     private boolean isVisible;
 
@@ -48,12 +47,12 @@ public class ButtonDTO {
     }
 
 
-    public Category getCategory() {
+    public String getCategory() {
         return category;
     }
 
 
-    public void setCategory(Category category) {
+    public void setCategory(String category) {
         this.category = category;
     }
 

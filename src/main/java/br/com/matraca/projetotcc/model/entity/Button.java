@@ -45,9 +45,8 @@ public class Button {
     @NotEmpty
     private String sound = "";
 
-    @ManyToOne(fetch = FetchType.EAGER) // CASCADE MUITO IMPORTANTE PARA PERSISTENCIA
-    @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
+    @NotEmpty
+    private String category;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
@@ -58,7 +57,7 @@ public class Button {
 
     private boolean isVisible = true;
 
-    public Button(String name, String img, String sound, Category category){
+    public Button(String name, String img, String sound, String category){
         this.name = name;
         this.image = img;
         this.sound = sound;
@@ -73,6 +72,7 @@ public class Button {
     @PreUpdate
     private void convertNameToLowerCase() {
         this.name = this.name != null ? this.name.toLowerCase() : null;
+        this.category = this.category != null ? this.category.toLowerCase() : null;
     }
 
 

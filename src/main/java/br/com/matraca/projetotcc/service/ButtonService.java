@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -13,10 +12,8 @@ import org.springframework.stereotype.Service;
 
 import br.com.matraca.projetotcc.dto.ButtonDTO;
 import br.com.matraca.projetotcc.model.entity.Button;
-import br.com.matraca.projetotcc.model.entity.Category;
 import br.com.matraca.projetotcc.model.entity.User;
 import br.com.matraca.projetotcc.repository.ButtonRepository;
-import br.com.matraca.projetotcc.repository.CategoryRepository;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -24,12 +21,6 @@ public class ButtonService {
 
     @Autowired
     ButtonRepository repository;
-
-    @Autowired
-    CategoryService categoryService;
-
-    @Autowired
-    CategoryRepository categoryRepository;
 
     @Autowired
     Scraping scrap;
@@ -74,43 +65,28 @@ public class ButtonService {
     //     button.setSound(sound);
     //     return repository.save(button);
     // }
-    @Transactional // PRECISO APRENDER A USAR MELHOR, E ABSTRAIR MAIS ESSE MÉTODO SAVE
-    public Button create(User user, Button newButton) throws RuntimeException, IOException {
+    @Transactional
+    public Button create(User user, Button newButton) throws IOException {
         List<Button> userButtons = user.getButton();
 
+        // Valida nome duplicado
         if (userButtons.stream().anyMatch(button -> button.getName().equalsIgnoreCase(newButton.getName()))) {
             throw new RuntimeException("Botão já existe, com o nome: " + newButton.getName());
         }
 
-        userButtons.stream().filter(button
-                -> button.getCategory().getName().equalsIgnoreCase(newButton.getCategory().getName())
-        ).findFirst().ifPresentOrElse(
-            existingButton  -> {
-            Category categoryFound = existingButton.getCategory();
-            categoryFound.addButton(newButton);
-            categoryRepository.save(categoryFound);
-        },
-                () -> {
-                    Category newCategory = new Category();
-                    newCategory.setName(newButton.getCategory().getName());
-                    newCategory.addButton(newButton);
-                    categoryRepository.save(newCategory);
-                }
-        );
-
-        newButton.setPosition(userButtons.size());
         newButton.setUser(user);
-        userButtons.add(newButton);
+        newButton.setPosition(userButtons.size());
 
-        if ("".equals(newButton.getImage())) {
+        if (newButton.getImage() == null || newButton.getImage().isEmpty()) {
             try {
                 newButton.setImage(scrap.getImage(newButton.getName()));
             } catch (IOException e) {
                 System.err.println("Erro ao obter imagem: " + e.getMessage());
-                newButton.setImage(""); // Define a imagem como vazia em caso de erro
+                newButton.setImage("");
             }
         }
 
+        userButtons.add(newButton);
         return repository.save(newButton);
     }
 
@@ -139,56 +115,33 @@ public class ButtonService {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Botão não encontrado: ID-" + button.getId()));
 
-        if (buttonToDelete.getCategory() != null) {
-            Category category = buttonToDelete.getCategory();
-            category.getButtons().remove(buttonToDelete);
-            categoryRepository.save(category);
-        }
-
         return userButtons.remove(buttonToDelete);
     }
 
-@Transactional
-public Button update(User user, Button updates) {
-    List<Button> userButtons = user.getButton();
+    @Transactional
+    public Button update(User user, Button updates) {
+        List<Button> userButtons = user.getButton();
 
-    Button button = userButtons.stream()
-            .filter(b -> b.getId().equals(updates.getId()))
-            .findFirst()
-            .orElseThrow(() -> new RuntimeException("Botão não encontrado: ID-" + updates.getId()));
+        Button button = userButtons.stream()
+                .filter(b -> b.getId().equals(updates.getId()))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Botão não encontrado: ID-" + updates.getId()));
 
-    if (updates.getName() != null) button.setName(updates.getName());
-    if (updates.getImage() != null) button.setImage(updates.getImage());
-    if (updates.getSound() != null) button.setSound(updates.getSound());
+        if (updates.getName() != null) {
+            button.setName(updates.getName());
+        }
+        if (updates.getImage() != null) {
+            button.setImage(updates.getImage());
+        }
+        if (updates.getSound() != null) {
+            button.setSound(updates.getSound());
+        }
+        if (updates.getCategory() != null && !updates.getCategory().equalsIgnoreCase(button.getCategory())) {
+            button.setCategory(updates.getCategory());
+        }
 
-    if (updates.getCategory() != null &&
-        !button.getCategory().getName().equalsIgnoreCase(updates.getCategory().getName())) {
-
-        Category oldCategory = button.getCategory();
-        oldCategory.getButtons().remove(button);
-        categoryRepository.save(oldCategory);
-
-        userButtons.stream()
-            .filter(b -> b.getCategory().getName().equalsIgnoreCase(updates.getCategory().getName()))
-            .findFirst()
-            .ifPresentOrElse(
-                existingButton -> {
-                    Category categoryFound = existingButton.getCategory();
-                    categoryFound.addButton(button);
-                    categoryRepository.save(categoryFound);
-                },
-                () -> {
-                    Category newCategory = new Category();
-                    newCategory.setName(updates.getCategory().getName());
-                    newCategory.addButton(button);
-                    categoryRepository.save(newCategory);
-                }
-            );
+        return repository.save(button);
     }
-
-    return repository.save(button);
-}
-
 
     // @Transactional
     // public void delete(UUID id) {
@@ -197,7 +150,7 @@ public Button update(User user, Button updates) {
     //         .orElseThrow(() -> new RuntimeException("Botão não encontrado com ID: " + id));
     //     repository.delete(button);
     // }
-    public Iterable<Button> findAllByCategory(Category category) {
+    public Iterable<Button> findAllByCategory(String category) {
         return this.repository.findAllByCategory(category);
     }
 

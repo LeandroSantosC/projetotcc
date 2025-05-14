@@ -94,7 +94,4 @@ public class User {
         this.email = email;
     }
     
-    // public Category(ButtonRequestDTO data){ //construtor para inicializar um objeto pelo Request, possibilitando a conversão
-    //     this.name = data.name();
-    // }
 }

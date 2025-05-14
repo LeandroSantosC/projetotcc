@@ -8,14 +8,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import br.com.matraca.projetotcc.model.entity.Button;
-import br.com.matraca.projetotcc.model.entity.Category;
 import br.com.matraca.projetotcc.model.entity.User;
 
 
 @Repository
 public interface ButtonRepository extends JpaRepository<Button, UUID>{ //porque tem que ser interface? -- preciso lembrar sobre <A,A>
 
-    Iterable<Button> findAllByCategory(Category category);
+    Iterable<Button> findAllByCategory(String category);
     Optional<Button> findByName(String name);
     Optional<Button> findByIdAndUser(UUID id, User user);
     List<Button> findByNameContaining(String name);
