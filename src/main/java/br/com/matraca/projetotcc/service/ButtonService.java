@@ -34,21 +34,21 @@ public class ButtonService {
     @Autowired
     Scraping scrap;
 
-    public List<Button> getAll(){
+    public List<Button> getAll() {
         List<Button> buttonList = repository.findAll();
         return buttonList;
     }
 
-    public List<Button> findAllByUser(User user){
+    public List<Button> findAllByUser(User user) {
         List<Button> buttonList = this.repository.findAllByUser(user);
-        return  buttonList;
+        return buttonList;
     }
 
     @Async
-    public void scrapImage() throws IOException{
+    public void scrapImage() throws IOException {
         Iterable<Button> buttonList = repository.findAll();
-        for(Button button : buttonList){
-            if("".equals(button.getImage())){
+        for (Button button : buttonList) {
+            if ("".equals(button.getImage())) {
                 button.setImage(scrap.getImage(button.getName()));
                 repository.save(button);
             }
@@ -63,22 +63,17 @@ public class ButtonService {
     //         newButton.setPosition(orderCont++);
     //         return newButton;
     //     });
-
     //     category = categoryService.save(category);
     //     category.addButton(button);
     //     button.setCategory(category);
-
     //     if("".equals(image)){
     //         image = scrap.getImage(name);
     //     }
-
     //     button.setImage(image);
     //     button.setName(name);
     //     button.setSound(sound);
-
     //     return repository.save(button);
     // }
-
     @Transactional // PRECISO APRENDER A USAR MELHOR, E ABSTRAIR MAIS ESSE MÉTODO SAVE
     public Button create(User user, Button newButton) throws RuntimeException, IOException {
         List<Button> userButtons = user.getButton();
@@ -90,17 +85,21 @@ public class ButtonService {
         userButtons.stream().filter(button
                 -> button.getCategory().getName().equalsIgnoreCase(newButton.getCategory().getName())
         ).findFirst().ifPresent(existingButton
-                -> newButton.setCategory(existingButton.getCategory())
+                -> {
+                    Category categoryFound = existingButton.getCategory();
+                    categoryFound.addButton(newButton);
+                    categoryRepository.save(categoryFound);
+                }
         );
 
         newButton.setPosition(userButtons.size());
         newButton.setUser(user);
         userButtons.add(newButton);
 
-        if("".equals(newButton.getImage())){
-            try{
+        if ("".equals(newButton.getImage())) {
+            try {
                 newButton.setImage(scrap.getImage(newButton.getName()));
-            } catch(IOException e){
+            } catch (IOException e) {
                 System.err.println("Erro ao obter imagem: " + e.getMessage());
                 newButton.setImage(""); // Define a imagem como vazia em caso de erro
             }
@@ -110,11 +109,11 @@ public class ButtonService {
     }
 
     @Transactional
-    public void saveLayoutButtons(List<ButtonDTO> buttons){
+    public void saveLayoutButtons(List<ButtonDTO> buttons) {
 
         List<Button> buttonsAtt = new ArrayList<>();
 
-        for(ButtonDTO button : buttons){
+        for (ButtonDTO button : buttons) {
             Button buttonAtualizado = repository.findById(button.getId()).orElseThrow(() -> new RuntimeException(button.getId() + " ID de Botão não encontrado!"));
 
             buttonAtualizado.setPosition(button.getPosition());
@@ -134,6 +133,12 @@ public class ButtonService {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Botão não encontrado: ID-" + button.getId()));
 
+        if (buttonToDelete.getCategory() != null) {
+            Category category = buttonToDelete.getCategory();
+            category.getButtons().remove(buttonToDelete);
+            categoryRepository.save(category);
+        }
+        
         return userButtons.remove(buttonToDelete);
     }
 
@@ -142,10 +147,9 @@ public class ButtonService {
         List<Button> userButtons = user.getButton();
 
         Button button = userButtons.stream()
-        .filter(b -> b.getId().equals(updates.getId()))
-        .findFirst()
-        .orElseThrow(() -> new RuntimeException("Botão não encontrado: ID-" + updates.getId()));
-
+                .filter(b -> b.getId().equals(updates.getId()))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Botão não encontrado: ID-" + updates.getId()));
 
         if (updates.getName() != null) {
             button.setName(updates.getName());
@@ -156,12 +160,16 @@ public class ButtonService {
         if (updates.getSound() != null) {
             button.setSound(updates.getSound());
         }
-        if(updates.getCategory() != null) {      
+        if (updates.getCategory() != null) {
             userButtons.stream().filter(b -> b.getCategory().getName().equalsIgnoreCase(updates.getCategory().getName()))
                     .findFirst()
-                    .ifPresent(existingButton -> updates.setCategory(existingButton.getCategory()));
+                    .ifPresent(existingButton -> {
+                        Category categoryFound = existingButton.getCategory();
+                        categoryFound.addButton(button);
+                        categoryRepository.save(categoryFound);
+                    });
         }
-    
+
         return repository.save(button);
     }
 
@@ -172,17 +180,15 @@ public class ButtonService {
     //         .orElseThrow(() -> new RuntimeException("Botão não encontrado com ID: " + id));
     //     repository.delete(button);
     // }
-
-
-    public Iterable<Button> findAllByCategory(Category category){
+    public Iterable<Button> findAllByCategory(Category category) {
         return this.repository.findAllByCategory(category);
     }
 
-    public Optional<Button> findByName(String name){
+    public Optional<Button> findByName(String name) {
         return this.repository.findByName(name);
     }
 
-    public Optional<Button> findById(UUID id){
+    public Optional<Button> findById(UUID id) {
         return this.repository.findById(id);
     }
 

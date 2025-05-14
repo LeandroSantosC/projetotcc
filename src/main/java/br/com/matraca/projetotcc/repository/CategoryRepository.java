@@ -2,6 +2,7 @@ package br.com.matraca.projetotcc.repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
@@ -14,7 +15,7 @@ import br.com.matraca.projetotcc.model.entity.User;
 
 
 @Repository
-public interface CategoryRepository extends CrudRepository<Category, Long>{
+public interface CategoryRepository extends CrudRepository<Category, UUID>{
 
     Optional<Category> findByName(String name); //porque tem que ser interface? -- preciso lembrar sobre <A,A>
     List<Category> findByNameContaining(String name);

@@ -45,12 +45,12 @@ public class Button {
     @NotEmpty
     private String sound = "";
 
-    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER) // CASCADE MUITO IMPORTANTE PARA PERSISTENCIA
+    @ManyToOne(fetch = FetchType.EAGER) // CASCADE MUITO IMPORTANTE PARA PERSISTENCIA
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
     @JsonIgnore
-    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 

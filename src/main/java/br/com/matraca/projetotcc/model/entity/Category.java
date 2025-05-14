@@ -2,6 +2,7 @@ package br.com.matraca.projetotcc.model.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -33,32 +34,30 @@ import lombok.Setter;
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE) //o generationtype pode ser UID, que é a criacao de ID aleatorio para gerar mais segurança no DB
-    private Long id;
+    private UUID id;
 
     @NotEmpty
     private String name;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "category", cascade=CascadeType.MERGE, orphanRemoval = false)
+    @OneToMany(mappedBy = "category", cascade=CascadeType.ALL, orphanRemoval = false)
     private List<Button> buttons;
-
-    
     
     // public Category(ButtonRequestDTO data){ //construtor para inicializar um objeto pelo Request, possibilitando a conversão
     //     this.name = data.name();
     // }
 
-    public void addButton(Button button){
+    public void addButton(Button button) {
         if (this.buttons == null) {
             this.buttons = new ArrayList<>();
         }
 
         if (!this.buttons.contains(button)) {
             this.buttons.add(button);
-            button.setCategory(this);  // se você também deseja garantir a associação do botão com a categoria
         }
-        else{
-            throw new IllegalArgumentException("Button already exists in this category");
+
+        if (button.getCategory() != this) {
+            button.setCategory(this);
         }
     }
 

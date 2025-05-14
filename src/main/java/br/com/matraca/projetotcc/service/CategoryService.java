@@ -2,6 +2,7 @@ package br.com.matraca.projetotcc.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ public class CategoryService {
         return this.repository.findByNameContaining(name);
     }
 
-    public Optional<Category> getById(Long id){
+    public Optional<Category> getById(UUID id){
         return this.repository.findById(id);
     }
 

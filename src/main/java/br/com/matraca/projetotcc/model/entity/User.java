@@ -53,7 +53,7 @@ public class User {
     private Gender gender;
     private LocalDate birthDate;
     
-    private int layoutScale = 3;
+    private float layoutScale = 3;
     
     private String voice;
 
