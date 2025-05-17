@@ -45,7 +45,7 @@ public class Board {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @JsonIgnoreProperties({"image", "sound", "category", "user", "position", "visible"})
+    @JsonIgnoreProperties({"category", "user", "position", "visible"})
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Button> button = new ArrayList<>();
 
