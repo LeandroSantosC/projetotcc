@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import br.com.matraca.projetotcc.model.enums.Gender;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -53,7 +54,8 @@ public class User {
     private Gender gender;
     private LocalDate birthDate;
     
-    private float layoutScale = 3;
+    @Embedded
+    private LayoutScale layoutScale = new LayoutScale(3,2);
     
     private String voice;
 
@@ -74,7 +76,7 @@ public class User {
         this.birthDate = birthDate;
     }
 
-    public User(int layoutScale, String voice){
+    public User(LayoutScale layoutScale, String voice){
         this.voice = voice;
         this.layoutScale = layoutScale;
     }
