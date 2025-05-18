@@ -14,7 +14,7 @@ public class EmailService {
     private JavaMailSender mailSender;
 
     public void sendVerificationEmail(String to, String token) {
-        String baseUrl = "http://localhost:8080"; // URL base da sua aplicação
+        String baseUrl = "https://matraca.onrender.com"; // URL base da sua aplicação
 
         String link = baseUrl + "/auth/verify-email?token=" + token;
 
