@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import br.com.matraca.projetotcc.dto.ApiResponse;
 import br.com.matraca.projetotcc.model.entity.Button;
@@ -37,7 +39,9 @@ public class AdminController {
 
     @GetMapping("/card")
     public ResponseEntity<ApiResponse<List<Button>>> getPublicCards() {
-        User user = repository.getByCredentials_Role(Role.PUBLIC);
+        User user = repository.getByCredentials_Role(Role.PUBLIC)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Public user not found"));
+        
         List<Button> buttons = user.getButton();
 
         return ResponseEntity.ok(ApiResponse.success(buttons));

@@ -1,4 +1,5 @@
 package br.com.matraca.projetotcc.repository;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,5 +14,5 @@ public interface UserRepository extends JpaRepository<User, UUID>{ //porque tem 
 
     User findByEmail(String email);
     boolean existsByEmail(String email);
-    User getByCredentials_Role(Role role);
+    Optional<User> getByCredentials_Role(Role role);
 }

@@ -34,23 +34,15 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         var token = this.recoverToken(request);
         if (token != null) {
-            var login = tokenService.validateToken(token);
-            System.out.println(login);
-            if (login != null) {
-                try {
-                    UserDetails user = authService.loadUserByUsername(login);
-                    var auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-                    SecurityContextHolder.getContext().setAuthentication(auth);
-                } catch (Exception e) {
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    addCorsHeaders(response, request);
-                    response.getWriter().write("Erro ao validar usuário: " + e.getMessage());
-                    return;
-                }
-            } else {
+            try {
+                var login = tokenService.validateToken(token);
+                UserDetails user = authService.loadUserByUsername(login);
+                var auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(auth);
+            } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 addCorsHeaders(response, request);
-                response.getWriter().write("Token inválido ou expirado");
+                response.getWriter().write("Erro ao validar token: " + e.getMessage());
                 return;
             }
         } else {
@@ -74,13 +66,13 @@ public class SecurityFilter extends OncePerRequestFilter {
     private void addCorsHeaders(HttpServletResponse response, HttpServletRequest request) {
         String origin = request.getHeader("Origin");
         if (origin != null && List.of(
-            "http://localhost:3000",
-            "http://localhost:3001",
-            "https://matraca.onrender.com"
+                "http://localhost:3000",
+                "http://localhost:3001",
+                "https://matraca.onrender.com"
         ).contains(origin)) {
             response.setHeader("Access-Control-Allow-Origin", origin);
             response.setHeader("Access-Control-Allow-Credentials", "true");
         }
     }
-    
+
 }

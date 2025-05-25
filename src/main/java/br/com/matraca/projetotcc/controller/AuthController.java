@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import br.com.matraca.projetotcc.config.TokenService;
 import br.com.matraca.projetotcc.dto.ApiResponse;
@@ -67,8 +69,14 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<String>> register(@RequestBody @Valid RegisterDTO data) {
 
-            User publicUser = userRepository.getByCredentials_Role(Role.PUBLIC);
+            User publicUser = userRepository.getByCredentials_Role(Role.PUBLIC)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Public user not found"));
+            
+            System.out.println(publicUser);
+
             List<Button> publicButton = new ArrayList<>(publicUser.getButton());
+            System.out.println(publicButton);
+
             User user = new User();
             user.setFullname(data.fullname());
             user.setEmail(data.email());

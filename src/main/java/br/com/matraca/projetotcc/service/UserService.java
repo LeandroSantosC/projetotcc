@@ -5,9 +5,11 @@ import java.util.UUID;
 
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import br.com.matraca.projetotcc.dto.RegisterDTO;
 import br.com.matraca.projetotcc.model.entity.Auth;
@@ -125,7 +127,18 @@ public class UserService {
         Optional.ofNullable(updates.getBirthDate()).ifPresent(user::setBirthDate);
         Optional.ofNullable(updates.getGender()).ifPresent(user::setGender);
         Optional.ofNullable(updates.getPhoneNumber()).ifPresent(user::setPhoneNumber);
-        Optional.ofNullable(updates.getCredentials()).ifPresent(user::setCredentials);
+        Optional.ofNullable(updates.getCredentials()).ifPresent(credentials -> {
+            if (credentials.getLogin() != null) {
+                user.getCredentials().setLogin(credentials.getLogin());
+            }
+            if (credentials.getPassword() != null) {
+                String encryptedPassword = new BCryptPasswordEncoder().encode(credentials.getPassword());
+                user.getCredentials().setPassword(encryptedPassword);
+            }
+            if (credentials.getRole() != null) {
+                user.getCredentials().setRole(credentials.getRole());
+            }
+        });
 
         try {
             return repository.save(user);
@@ -149,7 +162,8 @@ public class UserService {
 
     @Transactional
     public Button createPublicCard(Button newButton) throws RuntimeException {
-        User user = repository.getByCredentials_Role(Role.PUBLIC);
+        User user = repository.getByCredentials_Role(Role.PUBLIC)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Public user not found"));
 
         try {
             Button button = buttonService.create(user, newButton);
@@ -163,7 +177,8 @@ public class UserService {
 
     @Transactional
     public Button updatePublicCard(Button updates) throws RuntimeException {
-        User user = repository.getByCredentials_Role(Role.PUBLIC);
+        User user = repository.getByCredentials_Role(Role.PUBLIC)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Public user not found"));
 
         if (updates.getId() == null) {
             throw new RuntimeException("ID do botão não pode ser nulo.");
@@ -187,7 +202,8 @@ public class UserService {
             throw new RuntimeException("ID do botão não pode ser nulo.");
         }
 
-        User user = repository.getByCredentials_Role(Role.PUBLIC);
+        User user = repository.getByCredentials_Role(Role.PUBLIC)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Public user not found"));
 
         try {
             buttonService.delete(user, button);
