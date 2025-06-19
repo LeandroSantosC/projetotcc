@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.matraca.projetotcc.dto.CardLayoutDTO;
 import br.com.matraca.projetotcc.model.entity.Board;
 import br.com.matraca.projetotcc.model.entity.Button;
 import br.com.matraca.projetotcc.model.entity.User;
@@ -91,5 +92,22 @@ public class BoardService {
         }
     
         return repository.save(board);
+    }
+
+    @Transactional
+    public void saveLayout(List<CardLayoutDTO> boards) {
+
+        List<Board> boardsAtt = new ArrayList<>();
+
+        for (CardLayoutDTO board : boards) {
+            Board boardAtualizado = repository.findById(board.id()).orElseThrow(() -> new RuntimeException(board.id() + " ID de Prancha não encontrado!"));
+
+            boardAtualizado.setPosition(board.position());
+            boardAtualizado.setVisible(board.isVisible());
+
+            boardsAtt.add(boardAtualizado);
+        }
+
+        repository.saveAll(boardsAtt);
     }
 }

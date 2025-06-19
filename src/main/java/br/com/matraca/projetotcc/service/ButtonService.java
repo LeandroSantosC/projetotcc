@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import br.com.matraca.projetotcc.dto.ButtonDTO;
+import br.com.matraca.projetotcc.dto.CardLayoutDTO;
 import br.com.matraca.projetotcc.model.entity.Button;
 import br.com.matraca.projetotcc.model.entity.User;
 import br.com.matraca.projetotcc.repository.ButtonRepository;
@@ -91,14 +91,14 @@ public class ButtonService {
     }
 
     @Transactional
-    public void saveLayoutButtons(List<ButtonDTO> buttons) {
+    public void saveLayout(List<CardLayoutDTO> buttons) {
 
         List<Button> buttonsAtt = new ArrayList<>();
 
-        for (ButtonDTO button : buttons) {
-            Button buttonAtualizado = repository.findById(button.getId()).orElseThrow(() -> new RuntimeException(button.getId() + " ID de Botão não encontrado!"));
+        for (CardLayoutDTO button : buttons) {
+            Button buttonAtualizado = repository.findById(button.id()).orElseThrow(() -> new RuntimeException(button.id() + " ID de Botão não encontrado!"));
 
-            buttonAtualizado.setPosition(button.getPosition());
+            buttonAtualizado.setPosition(button.position());
             buttonAtualizado.setVisible(button.isVisible());
 
             buttonsAtt.add(buttonAtualizado);

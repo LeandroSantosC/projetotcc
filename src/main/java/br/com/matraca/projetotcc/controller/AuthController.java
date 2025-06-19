@@ -30,6 +30,7 @@ import br.com.matraca.projetotcc.config.TokenService;
 import br.com.matraca.projetotcc.dto.ApiResponse;
 import br.com.matraca.projetotcc.dto.LoginDTO;
 import br.com.matraca.projetotcc.dto.RegisterDTO;
+import br.com.matraca.projetotcc.dto.UserPreferenceDTO;
 import br.com.matraca.projetotcc.model.entity.Auth;
 import br.com.matraca.projetotcc.model.entity.Button;
 import br.com.matraca.projetotcc.model.enums.Role;
@@ -132,6 +133,15 @@ public class AuthController {
         User updatedUser = userService.updateUser(user, updates);
 
         return ResponseEntity.ok(ApiResponse.success(updatedUser));
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @PostMapping("/user/preferences")
+    public ResponseEntity<ApiResponse<String>> savePreferences(@AuthenticationPrincipal Auth auth, @RequestBody UserPreferenceDTO updates) {
+        User user = auth.getUser();
+        userService.savePreferences(user, updates);
+
+        return ResponseEntity.ok(ApiResponse.success("Preferences saved successfully"));
     }
 
     @PreAuthorize("hasRole('USER')")

@@ -3,15 +3,13 @@ package br.com.matraca.projetotcc.service;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import br.com.matraca.projetotcc.dto.RegisterDTO;
+import br.com.matraca.projetotcc.dto.UserPreferenceDTO;
 import br.com.matraca.projetotcc.model.entity.Auth;
 import br.com.matraca.projetotcc.model.entity.Board;
 import br.com.matraca.projetotcc.model.entity.Button;
@@ -310,6 +308,31 @@ public class UserService {
             repository.save(user);
         } catch (Exception e) {
             throw new RuntimeException("Erro ao deletar: " + e.getMessage(), e);
+        }
+    }
+
+    @Transactional
+    public User savePreferences(User user, UserPreferenceDTO updates) {
+        if (updates.voice() == null
+                && updates.layoutScale() == null
+                && updates.cards() == null
+                && updates.boards() == null) {
+            throw new RuntimeException("Nenhum campo para atualizar foi fornecido.");
+        }
+
+        if (!authRepository.existsByLogin(user.getCredentials().getLogin())) {
+            throw new RuntimeException("User don't exists");
+        }
+
+        Optional.ofNullable(updates.voice()).ifPresent(user::setVoice);
+        Optional.ofNullable(updates.layoutScale()).ifPresent(user::setLayoutScale);
+        Optional.ofNullable(updates.cards()).ifPresent(cards -> buttonService.saveLayout(cards));
+        Optional.ofNullable(updates.boards()).ifPresent(boards -> boardService.saveLayout(boards));
+
+        try {
+            return repository.save(user);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao atualizar usuario: " + e.getMessage(), e);
         }
     }
 }
