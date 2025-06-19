@@ -1,10 +1,12 @@
 package br.com.matraca.projetotcc.config;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
 import com.auth0.jwt.JWT;
@@ -16,6 +18,9 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 public class TokenService {
     @Value("${jwt.secret}")
     private String secret;
+
+    @Value("${dev.mode}")
+    private Boolean devMode;
     
     public String generateToken(String login) {
         try{
@@ -25,14 +30,26 @@ public class TokenService {
                     .withSubject(login)
                     .withExpiresAt(getExpirationTime())
                     .sign(algorithm);
+
             return token;
         } catch (JWTCreationException e) {
             throw new RuntimeException("Error while generating token", e);
         }
     }
 
+    public ResponseCookie generateCookie(String token, Boolean rememberMe) {
+        Duration duration = rememberMe ? Duration.ofDays(30) : Duration.ofSeconds(-1);
+        return ResponseCookie.from("JWT_TOKEN", token)
+                .httpOnly(true)
+                .secure(devMode ? false : true)
+                .sameSite(devMode ? "Lax" : "None")
+                .path("/")
+                .maxAge(duration)
+                .build();
+    }
+
     private Instant getExpirationTime() {
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
+        return LocalDateTime.now().plusDays(30).toInstant(ZoneOffset.of("-03:00"));
     }
 
 

@@ -1,5 +1,6 @@
 package br.com.matraca.projetotcc.controller;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -7,7 +8,9 @@ import java.util.stream.Collectors;
 import javax.smartcardio.Card;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -68,18 +71,11 @@ public class AuthController {
         }
 
         var token = tokenService.generateToken(authUser.getLogin());
+        ResponseCookie cookie = tokenService.generateCookie(token, auth.rememberMe());
   
-        // Cria cookie com token JWT
-        var cookie = new Cookie("JWT_TOKEN", token);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true); // true em produção com HTTPS
-        cookie.setPath("/");
-        if(auth.rememberMe()){
-            cookie.setMaxAge(60 * 60 * 24 * 30);
-        }
-        response.addCookie(cookie);
+        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-        return ResponseEntity.ok(ApiResponse.success("Login successful " + token));
+        return ResponseEntity.ok(ApiResponse.success("Login successful"));
     }
 
     @PostMapping("/logout")
