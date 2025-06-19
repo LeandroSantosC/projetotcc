@@ -91,7 +91,7 @@ public class ButtonService {
     }
 
     @Transactional
-    public void saveLayout(List<CardLayoutDTO> buttons) {
+    public List<Button> saveLayout(List<CardLayoutDTO> buttons) {
 
         List<Button> buttonsAtt = new ArrayList<>();
 
@@ -99,12 +99,12 @@ public class ButtonService {
             Button buttonAtualizado = repository.findById(button.id()).orElseThrow(() -> new RuntimeException(button.id() + " ID de Botão não encontrado!"));
 
             buttonAtualizado.setPosition(button.position());
-            buttonAtualizado.setVisible(button.isVisible());
+            buttonAtualizado.setVisible(button.visible());
 
             buttonsAtt.add(buttonAtualizado);
         }
 
-        repository.saveAll(buttonsAtt);
+        return buttonsAtt;
     }
 
     @Transactional

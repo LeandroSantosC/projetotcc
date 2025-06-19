@@ -326,8 +326,13 @@ public class UserService {
 
         Optional.ofNullable(updates.voice()).ifPresent(user::setVoice);
         Optional.ofNullable(updates.layoutScale()).ifPresent(user::setLayoutScale);
-        Optional.ofNullable(updates.cards()).ifPresent(cards -> buttonService.saveLayout(cards));
-        Optional.ofNullable(updates.boards()).ifPresent(boards -> boardService.saveLayout(boards));
+        System.out.println("Atualizando preferências do usuário: " + user.getVoice() + ", " + user.getLayoutScale().getCard() + ", " + user.getLayoutScale().getBoard() );
+        if(updates.cards() != null) {
+            user.setButton(buttonService.saveLayout(updates.cards()));
+        }
+        if(updates.boards() != null){
+            user.setBoard(boardService.saveLayout(updates.boards()));
+        }
 
         try {
             return repository.save(user);

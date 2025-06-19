@@ -5,6 +5,6 @@ import java.util.UUID;
 public record CardLayoutDTO(
     UUID id,
     int position,
-    boolean isVisible
+    boolean visible
 ) {
 }

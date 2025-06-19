@@ -9,12 +9,9 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 
 @Component
 @RequiredArgsConstructor
@@ -30,11 +27,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         String token = tokenService.generateToken(email); // seu serviço de JWT aqui
         ResponseCookie cookie = tokenService.generateCookie(token, true);
   
-        
-        String state = request.getParameter("state");
-        String target = (state != null) ? URLDecoder.decode(state, StandardCharsets.UTF_8) : "https://matraca.onrender.com";
-        
         response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-        response.sendRedirect(target);
+        response.sendRedirect("https://matraca.onrender.com");
     }
 }

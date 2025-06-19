@@ -95,7 +95,7 @@ public class BoardService {
     }
 
     @Transactional
-    public void saveLayout(List<CardLayoutDTO> boards) {
+    public List<Board> saveLayout(List<CardLayoutDTO> boards) {
 
         List<Board> boardsAtt = new ArrayList<>();
 
@@ -103,11 +103,11 @@ public class BoardService {
             Board boardAtualizado = repository.findById(board.id()).orElseThrow(() -> new RuntimeException(board.id() + " ID de Prancha não encontrado!"));
 
             boardAtualizado.setPosition(board.position());
-            boardAtualizado.setVisible(board.isVisible());
+            boardAtualizado.setVisible(board.visible());
 
             boardsAtt.add(boardAtualizado);
         }
 
-        repository.saveAll(boardsAtt);
+        return boardsAtt;
     }
 }
