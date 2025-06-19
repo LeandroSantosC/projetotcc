@@ -37,8 +37,7 @@ public class TokenService {
         }
     }
 
-    public ResponseCookie generateCookie(String token, boolean rememberMe) {
-        Duration duration = rememberMe ? Duration.ofDays(30) : Duration.ofSeconds(-1);
+    public ResponseCookie generateCookie(String token, Duration duration) {
         return ResponseCookie.from("JWT_TOKEN", token)
                 .httpOnly(true)
                 .secure(devMode ? false : true)

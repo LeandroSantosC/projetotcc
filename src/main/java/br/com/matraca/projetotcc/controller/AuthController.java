@@ -72,7 +72,7 @@ public class AuthController {
         }
 
         var token = tokenService.generateToken(authUser.getLogin());
-        ResponseCookie cookie = tokenService.generateCookie(token, auth.rememberMe());
+        ResponseCookie cookie = tokenService.generateCookie(token, auth.rememberMe() ? Duration.ofDays(30) : Duration.ofSeconds(-1));
   
         response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
@@ -82,14 +82,9 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<String>> logout(HttpServletResponse response) {
   
-        // Cria cookie com token JWT
-        var cookie = new Cookie("JWT_TOKEN", null);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true); // true em produção com HTTPS
-        cookie.setPath("/");
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
-
+        ResponseCookie cookie = tokenService.generateCookie(null, Duration.ofSeconds(0));
+  
+        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         return ResponseEntity.ok(ApiResponse.success("Logout successful"));
     }
 

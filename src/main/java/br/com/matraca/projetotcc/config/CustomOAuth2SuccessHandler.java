@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.Duration;
 
 @Component
 @RequiredArgsConstructor
@@ -25,7 +26,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         String email = oAuth2User.getAttribute("email");
 
         String token = tokenService.generateToken(email); // seu serviço de JWT aqui
-        ResponseCookie cookie = tokenService.generateCookie(token, true);
+        ResponseCookie cookie = tokenService.generateCookie(token, Duration.ofDays(30));
   
         response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         response.sendRedirect("https://matraca.onrender.com");
