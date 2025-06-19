@@ -1,9 +1,12 @@
 package br.com.matraca.projetotcc.config;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -41,14 +44,10 @@ public class SecurityFilter extends OncePerRequestFilter {
                 var auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(auth);
             } catch (Exception e) {
-                Cookie cookie = new Cookie("JWT_TOKEN", "");
-                cookie.setHttpOnly(true);
-                cookie.setSecure(true); // variável para produção
-                cookie.setPath("/");
-                cookie.setMaxAge(0);
+                ResponseCookie cookie = tokenService.generateCookie(null, Duration.ofSeconds(0));
                 
                 SecurityContextHolder.clearContext();
-                response.addCookie(cookie);
+                response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 addCorsHeaders(response, request);
                 response.getWriter().write("Erro ao validar token: " + e.getMessage());
