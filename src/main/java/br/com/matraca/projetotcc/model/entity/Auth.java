@@ -78,6 +78,7 @@ public class Auth implements UserDetails{
       this.role = role;
     }
 
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
       if(null == this.role) {
@@ -90,24 +91,28 @@ public class Auth implements UserDetails{
       };
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonExpired() {
       // TODO Auto-generated method stub
       return UserDetails.super.isAccountNonExpired();
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonLocked() {
       // TODO Auto-generated method stub
       return UserDetails.super.isAccountNonLocked();
     }
 
+    @JsonIgnore
     @Override
     public boolean isCredentialsNonExpired() {
       // TODO Auto-generated method stub
       return UserDetails.super.isCredentialsNonExpired();
     }
 
+    @JsonIgnore
     @Override
     public boolean isEnabled() {
       // TODO Auto-generated method stub

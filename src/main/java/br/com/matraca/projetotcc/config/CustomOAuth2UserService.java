@@ -35,7 +35,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     public OAuth2User loadUser(OAuth2UserRequest request) {
         OAuth2User oAuth2User = new DefaultOAuth2UserService().loadUser(request);
 
-        Boolean isVerified = oAuth2User.getAttribute("email_verified");
+        boolean isVerified = oAuth2User.getAttribute("email_verified");
         if (!isVerified) {
             throw new RuntimeException("Email não verificado");
         }

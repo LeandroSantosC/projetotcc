@@ -20,7 +20,7 @@ public class TokenService {
     private String secret;
 
     @Value("${dev.mode}")
-    private Boolean devMode;
+    private boolean devMode;
     
     public String generateToken(String login) {
         try{
@@ -37,7 +37,7 @@ public class TokenService {
         }
     }
 
-    public ResponseCookie generateCookie(String token, Boolean rememberMe) {
+    public ResponseCookie generateCookie(String token, boolean rememberMe) {
         Duration duration = rememberMe ? Duration.ofDays(30) : Duration.ofSeconds(-1);
         return ResponseCookie.from("JWT_TOKEN", token)
                 .httpOnly(true)
