@@ -64,6 +64,14 @@ public class Button {
         this.category = category;
     }
 
+    public Button(String name, String img, String sound, User user, String category){
+        this.name = name;
+        this.image = img;
+        this.sound = sound;
+        this.user = user;
+        this.category = category;
+    }
+
     public Button(UUID id){
         this.id = id;
     }

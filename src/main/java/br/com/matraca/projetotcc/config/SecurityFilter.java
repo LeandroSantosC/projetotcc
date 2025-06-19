@@ -13,6 +13,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import br.com.matraca.projetotcc.service.AuthService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -40,6 +41,14 @@ public class SecurityFilter extends OncePerRequestFilter {
                 var auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(auth);
             } catch (Exception e) {
+                Cookie cookie = new Cookie("JWT_TOKEN", "");
+                cookie.setHttpOnly(true);
+                cookie.setSecure(true); // variável para produção
+                cookie.setPath("/");
+                cookie.setMaxAge(0);
+                
+                SecurityContextHolder.clearContext();
+                response.addCookie(cookie);
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 addCorsHeaders(response, request);
                 response.getWriter().write("Erro ao validar token: " + e.getMessage());
@@ -56,12 +65,25 @@ public class SecurityFilter extends OncePerRequestFilter {
     }
 
     private String recoverToken(HttpServletRequest request) {
-        var authorizationHeader = request.getHeader("Authorization");
-        if (authorizationHeader != null) {
-            return authorizationHeader.replace("Bearer ", "");
+    // Primeiro tenta pegar do cookie
+    if (request.getCookies() != null) {
+        for (var cookie : request.getCookies()) {
+            System.out.println("cookie: " + cookie.getName());
+            if ("JWT_TOKEN".equals(cookie.getName())) {
+                return cookie.getValue();
+            }
         }
-        return null;
     }
+
+    // Se não tiver cookie, tenta Authorization header
+    var authorizationHeader = request.getHeader("Authorization");
+    if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+        return authorizationHeader.replace("Bearer ", "");
+    }
+
+    return null;
+    }
+
 
     private void addCorsHeaders(HttpServletResponse response, HttpServletRequest request) {
         String origin = request.getHeader("Origin");

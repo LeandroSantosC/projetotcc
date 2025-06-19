@@ -1,10 +1,12 @@
 package br.com.matraca.projetotcc.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,11 +18,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import br.com.matraca.projetotcc.dto.ApiResponse;
 import br.com.matraca.projetotcc.model.entity.Auth;
 import br.com.matraca.projetotcc.model.entity.Button;
 import br.com.matraca.projetotcc.model.entity.User;
+import br.com.matraca.projetotcc.model.enums.Role;
+import br.com.matraca.projetotcc.repository.UserRepository;
 import br.com.matraca.projetotcc.service.Scraping;
 import br.com.matraca.projetotcc.service.UserService;
 
@@ -32,10 +37,21 @@ public class CardController {
     private UserService userService;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private Scraping scrap;
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<Button>>> getCards(@AuthenticationPrincipal Auth auth) {
+        User publicUser = userRepository.getByCredentials_Role(Role.PUBLIC)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Public user not found"));
+            
+            System.out.println(publicUser);
+
+            List<Button> publicButton = new ArrayList<>(publicUser.getButton());
+            System.out.println(publicButton);
+
         User user = auth.getUser();
         List<Button> buttons = user.getButton();
         return ResponseEntity.ok(ApiResponse.success(buttons));

@@ -1,7 +1,9 @@
 package br.com.matraca.projetotcc.config;
 
 import br.com.matraca.projetotcc.model.entity.Auth;
+import br.com.matraca.projetotcc.model.entity.Button;
 import br.com.matraca.projetotcc.model.entity.User;
+import br.com.matraca.projetotcc.model.enums.Role;
 import br.com.matraca.projetotcc.repository.AuthRepository;
 import br.com.matraca.projetotcc.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,9 +13,13 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Service
@@ -41,10 +47,19 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         if (userOptional.isEmpty()) {
             Auth newAuth = new Auth();
             User newUser = new User();
+            User publicUser = userRepository.getByCredentials_Role(Role.PUBLIC)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Public user not found"));
+
+            List<Button> newCards = publicUser.getButton().stream()
+                .map(c -> new Button(c.getName(), c.getImage(), c.getSound(), newUser, c.getCategory()))
+                .collect(Collectors.toList());
+            newUser.setButton(newCards);
             newUser.setFullname(fullname);
             newUser.setEmail(email);
             newUser.setCredentials(newAuth);
             newAuth.setUser(newUser);
+            newAuth.setLogin(email);
+            newAuth.setPassword(null); // Senha não é necessária para OAuth2
             newAuth.setEmailVerified(true);
             newAuth.setVerificationToken(null);
             newAuth.setRole(br.com.matraca.projetotcc.model.enums.Role.USER); // ou outro role padrão

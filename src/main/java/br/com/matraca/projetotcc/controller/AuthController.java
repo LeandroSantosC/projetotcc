@@ -2,6 +2,9 @@ package br.com.matraca.projetotcc.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.smartcardio.Card;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +25,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import br.com.matraca.projetotcc.config.TokenService;
 import br.com.matraca.projetotcc.dto.ApiResponse;
+import br.com.matraca.projetotcc.dto.LoginDTO;
 import br.com.matraca.projetotcc.dto.RegisterDTO;
 import br.com.matraca.projetotcc.model.entity.Auth;
 import br.com.matraca.projetotcc.model.entity.Button;
@@ -30,6 +34,8 @@ import br.com.matraca.projetotcc.repository.AuthRepository;
 import br.com.matraca.projetotcc.repository.UserRepository;
 import br.com.matraca.projetotcc.model.entity.User;
 import br.com.matraca.projetotcc.service.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 
@@ -53,7 +59,7 @@ public class AuthController {
     private UserRepository userRepository;
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<String>> login(@RequestBody RegisterDTO auth) {
+    public ResponseEntity<ApiResponse<String>> login(@RequestBody LoginDTO auth, HttpServletResponse response) {
         var usernamePassword = new UsernamePasswordAuthenticationToken(auth.login(), auth.password());
         var authentication = this.authenticationManager.authenticate(usernamePassword);
         Auth authUser = (Auth) authentication.getPrincipal();
@@ -63,7 +69,31 @@ public class AuthController {
 
         var token = tokenService.generateToken(authUser.getLogin());
   
-        return ResponseEntity.ok(ApiResponse.success(token));
+        // Cria cookie com token JWT
+        var cookie = new Cookie("JWT_TOKEN", token);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true); // true em produção com HTTPS
+        cookie.setPath("/");
+        if(auth.rememberMe()){
+            cookie.setMaxAge(60 * 60 * 24 * 30);
+        }
+        response.addCookie(cookie);
+
+        return ResponseEntity.ok(ApiResponse.success("Login successful " + token));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<String>> logout(HttpServletResponse response) {
+  
+        // Cria cookie com token JWT
+        var cookie = new Cookie("JWT_TOKEN", null);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true); // true em produção com HTTPS
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+
+        return ResponseEntity.ok(ApiResponse.success("Logout successful"));
     }
 
     @PostMapping("/register")
@@ -71,19 +101,19 @@ public class AuthController {
 
             User publicUser = userRepository.getByCredentials_Role(Role.PUBLIC)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Public user not found"));
-            
-            System.out.println(publicUser);
-
-            List<Button> publicButton = new ArrayList<>(publicUser.getButton());
-            System.out.println(publicButton);
 
             User user = new User();
+
+            List<Button> newCards = publicUser.getButton().stream()
+                .map(c -> new Button(c.getName(), c.getImage(), c.getSound(), user, c.getCategory()))
+                .collect(Collectors.toList());
+
             user.setFullname(data.fullname());
             user.setEmail(data.email());
             user.setPhoneNumber(data.phoneNumber());
             user.setBirthDate(data.birthDate());
             user.setGender(data.gender());
-            user.setButton(publicButton);
+            user.setButton(newCards);
             userService.registerUser(user, data.email(), data.password(), Role.USER);
 
         return ResponseEntity.ok(ApiResponse.success("User registered successfully"));
